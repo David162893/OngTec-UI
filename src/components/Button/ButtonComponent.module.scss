@@ -29,6 +29,14 @@
     outline: 3px solid white;
     outline-offset: 3px;
   }
+
+  &:disabled {
+    background-color: #BDBDBD;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+
 }
 
 /* Botón pequeño */

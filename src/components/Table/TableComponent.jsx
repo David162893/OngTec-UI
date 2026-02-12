@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react"
-import ButtonComponent from "@/components/Button/ButtonComponent"
+import ButtonComponent from "../Button/ButtonComponent"
+import ModalComponent from "../Modal/ModalComponent"
 import { usePersistedColumns } from "@/hooks/usePersistedColumns"
 import styles from "./TableComponent.module.scss"
 
@@ -137,7 +138,7 @@ export default function TableComponent({ data = [], className, onEdit, onDelete,
                             {headerRows.map((row, i) => (
                                 <tr key={i}>
                                     {row.map(cell => (
-                                        <th 
+                                        <th
                                             key={cell.path}
                                             colSpan={cell.colSpan}
                                             rowSpan={cell.rowSpan}
@@ -171,28 +172,24 @@ export default function TableComponent({ data = [], className, onEdit, onDelete,
                 </div>
             </div>
 
-            {showColumnSelector && (
-                <div className={styles.modalOverlay} onClick={() => setShowColumnSelector(false)}>
-                    <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-                        <div className={styles.modalHeader}>
-                            <h3>Configurar columnas</h3>
-                            <ButtonComponent variant="modalClose" onClick={() => setShowColumnSelector(false)}>✕</ButtonComponent>
-                        </div>
-                        <div className={styles.modalBody}>
-                            {leafColumns.map(col => (
-                                <label key={col} className={styles.columnOption}>
-                                    <input 
-                                        type="checkbox" 
-                                        checked={visibleColumns.includes(col)} 
-                                        onChange={() => toggleColumn(col, leafColumns)}
-                                    />
-                                    <span>{col.replace(/\./g, ' > ')}</span>
-                                </label>
-                            ))}
-                        </div>
-                    </div>
+            <ModalComponent
+                open={showColumnSelector}
+                onClose={() => setShowColumnSelector(false)}
+                title="Configurar columnas"
+            >
+                <div className={styles.columnSelectorBody}>
+                    {leafColumns.map(col => (
+                        <label key={col} className={styles.columnOption}>
+                            <input
+                                type="checkbox"
+                                checked={visibleColumns.includes(col)}
+                                onChange={() => toggleColumn(col, leafColumns)}
+                            />
+                            <span>{col.replace(/\./g, ' > ')}</span>
+                        </label>
+                    ))}
                 </div>
-            )}
+            </ModalComponent>
         </>
     )
 }

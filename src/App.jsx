@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import HeaderComponent from "./components/Header/HeaderComponent"
 import RegisterPage from "./pages/RegisterPage"
 import TasksPage from "./pages/Tasks/TasksPage"
@@ -39,6 +41,7 @@ export default function App() {
             <BrowserRouter>
                 <AppContent />
             </BrowserRouter>
+            <ToastContainer position="bottom-right" />
         </AuthProvider>
     )
 }

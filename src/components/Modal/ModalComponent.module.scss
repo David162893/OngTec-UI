@@ -1,0 +1,132 @@
+@use 'sass:color';
+@use '@/styles/variables' as *;
+
+/* --- Overlay --- */
+.modal__overlay {
+  position: fixed;
+  inset: 0;
+  background: $overlay-bg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+  backdrop-filter: blur(3px);
+  overflow-x: hidden;   // evita scroll horizontal
+  overflow-y: auto;     // scroll vertical si el contenido es muy alto
+  animation: modal__fade-in 0.2s ease-out;
+}
+
+/* --- Modal Content --- */
+.modal__content {
+  display: inline-block;     
+  width: auto;               
+  min-width: 320px;          // nunca demasiado pequeño
+  max-width: 95vw;           // máximo 95% de la pantalla
+  max-height: 90vh;          
+  overflow-y: auto;          // scroll vertical si es muy alto
+  border-radius: $card-radius;
+  box-shadow: $shadow-lg;
+  background: $color-background;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  animation: modal__appear 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 2rem;             // padding interno generoso
+  box-sizing: border-box;     // asegura que padding no afecte ancho
+}
+
+/* --- Header --- */
+.modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  &-title {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $color-primary;
+  }
+
+  &-close {
+    background: transparent;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    color: $color-text-dark;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $color-error;
+    }
+  }
+}
+
+/* --- Body --- */
+.modal__body {
+  font-size: 1rem;
+  color: $color-text-medium;
+  flex: 1;
+}
+
+/* --- Animaciones --- */
+@keyframes modal__fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal__appear {
+  from { opacity: 0; transform: scale(0.95) translateY(-20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* --- Media Queries --- */
+@media (max-width: 1024px) {
+  .modal__content {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .modal__content {
+    width: 90vw;           // ocupa más espacio en tablet
+    min-width: auto;       // deja que se adapte
+  }
+}
+
+@media (max-width: 480px) {
+  .modal__overlay {
+    align-items: flex-start;
+    padding: 0.5rem;
+  }
+
+  .modal__content {
+    width: 95vw;           // ocupa casi toda la pantalla
+    min-width: auto;
+    padding: 1rem 1.25rem;
+    border-radius: 1.25rem 1.25rem 0 0;
+    max-height: 95vh;
+  }
+}
+
+@media (max-height: 600px) {
+  .modal__overlay {
+    align-items: flex-start;
+    padding-top: 1rem;
+  }
+
+  .modal__content {
+    max-height: 90vh;
+  }
+}
+
+/* --- CamelCase Aliases para React --- */
+.modalOverlay      { @extend .modal__overlay; }
+.modalContent      { @extend .modal__content; }
+.modalHeader       { @extend .modal__header; }
+.modalHeaderTitle  { @extend .modal__header-title; }
+.modalHeaderClose  { @extend .modal__header-close; }
+.modalBody         { @extend .modal__body; }
