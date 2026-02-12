@@ -1,0 +1,21 @@
+@use 'sass:color';
+@use '@/styles/variables' as *;
+
+@mixin header-level-style($level) {
+    $bg-color: color.adjust($color-primary, $lightness: (
+            $level - 1) * $header-step-lightness
+    );
+background-color: $bg-color;
+
+@if (color.channel($bg-color, "lightness", $space: hsl) > $header-text-threshold) {
+    color: $color-text-dark;
+    border-right: 1px solid rgba($color-text-dark, 0.08);
+    border-bottom: 1px solid rgba($color-text-dark, 0.08);
+}
+
+@else {
+    color: white;
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+}

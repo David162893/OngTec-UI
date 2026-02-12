@@ -1,0 +1,170 @@
+@use '@/styles/variables' as *;
+@use 'sass:color';
+
+/* Botón principal grande */
+.primary {
+  background-color: $color-action;
+  color: $color-text-dark;
+  border: none;
+  padding: 0.75rem 1.75rem;
+  font-size: 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  margin: 0 0.5rem;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline: 3px solid white;
+    outline-offset: 3px;
+  }
+}
+
+/* Botón pequeño */
+.primary-little {
+  @extend .primary;
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  border-radius: 500px;
+}
+
+/* Botón logout */
+.btn-logout {
+  background-color: $color-error;
+  color: white;
+  border: none;
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+
+  &:hover {
+    background-color: $color-error-hover;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  }
+
+  &:focus-visible {
+    outline: 3px solid white;
+    outline-offset: 2px;
+  }
+}
+
+/* Botón header (blanco translucido) */
+.header-btn {
+  background-color: rgba(255, 255, 255, 0.85);
+  color: $color-text-dark;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+
+  &:focus-visible {
+    outline: 3px solid $color-action;
+    outline-offset: 2px;
+  }
+}
+
+/* Botones específicos para la tabla */
+.table-action {
+  background-color: $color-primary;
+  color: white;
+  border: none;
+  padding: 0.45rem 1rem;
+  font-size: 0.85rem;
+  border-radius: 999px;
+  cursor: pointer;
+  margin: 0 0.25rem;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    background-color: color.adjust($color-primary, $lightness: -5%);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline: 3px solid white;
+    outline-offset: 2px;
+  }
+}
+
+/* Botón de toggle del modal (⚙️) */
+.table-toggle {
+  background-color: rgba($color-primary, 0.1);
+  color: $color-primary;
+  border: none;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.85rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: rgba($color-primary, 0.2);
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: 3px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+/* Botón cerrar modal (✕) */
+.modal-close {
+  background-color: transparent;
+  color: $color-muted;
+  border: none;
+  font-size: 1.25rem;
+  padding: 0.25rem;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+/* CamelCase aliases para React / CSS Modules */
+.primaryLittle { @extend .primary-little; }
+.headerBtn { @extend .header-btn; }
+.logoutBtn { @extend .btn-logout; }
+.tableAction { @extend .table-action; }
+.tableToggle { @extend .table-toggle; }
+.modalClose { @extend .modal-close; }

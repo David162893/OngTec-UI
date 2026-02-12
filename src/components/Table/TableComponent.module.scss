@@ -1,0 +1,315 @@
+@use '@/styles/variables' as *;
+@use '@/styles/table-mixins' as mixins;
+@use 'sass:color';
+
+/* Contenedores */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    padding: 2rem 0;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba($color-primary, 0.25);
+        border-radius: 4px;
+    }
+}
+
+.table-wrapper {
+    display: table;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Tabla principal */
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: white;
+    border-radius: $card-radius;
+    box-shadow: $shadow-lg;
+    overflow: hidden;
+    min-width: 800px;
+    font-family: 'Montserrat', sans-serif;
+
+    th,
+    td {
+        padding: 1.15rem 1.5rem;
+        text-align: left;
+        vertical-align: middle;
+        transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    th {
+        text-align: center; 
+        vertical-align: middle;
+    }
+
+    thead {
+        @for $i from 1 through 8 {
+            tr:nth-child(#{$i}) th {
+                @include mixins.header-level-style($i);
+                font-weight: if($i ==1, 700, 600);
+                font-size: if($i ==1, 0.95rem, 0.85rem);
+                text-transform: if($i ==1, uppercase, none);
+                letter-spacing: if($i ==1, 0.5px, normal);
+                white-space: nowrap;
+
+                &.nested-header {
+                    text-align: center;
+                }
+
+                &:last-child {
+                    border-right: none;
+                }
+            }
+        }
+    }
+
+    tbody {
+        tr {
+            border-bottom: 1px solid rgba($color-text-medium, 0.08);
+
+            &:nth-child(even) {
+                background-color: rgba($color-background, 0.4);
+            }
+
+            &:hover {
+                background-color: rgba($color-secondary, 0.15);
+                transform: scale(1.01);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            }
+
+            td {
+                font-size: 0.9rem;
+                color: $color-text-medium;
+                border-right: 1px solid rgba($color-text-medium, 0.03);
+
+                &:last-child {
+                    border-right: none;
+                }
+            }
+        }
+    }
+}
+
+/* Acciones */
+.actions-header {
+    background-color: $color-primary !important;
+    color: white !important;
+    text-align: center !important;
+    width: 60px;
+    font-weight: 700;
+}
+
+.actions-cell {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    justify-content: center;
+}
+
+/* Array items */
+.array-item {
+    display: inline-block;
+    padding: 0.3rem 0.6rem;
+    color: $color-primary;
+    border-radius: 2rem;
+    background-color: rgba($color-primary, 0.08);
+    margin: 0.2rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid rgba($color-primary, 0.15);
+}
+
+/* No hay datos */
+.no-data-message {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: $card-radius;
+    box-shadow: $shadow-lg;
+    color: $color-muted;
+    font-weight: 500;
+}
+
+/* Modal elegante */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: $overlay-bg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(6px);
+    padding: 1rem;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 1.25rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    width: 100%;
+    max-width: 450px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-header {
+    padding: 1.5rem;
+    background: $color-background;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: $color-primary;
+    }
+}
+
+.modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Selector de columnas */
+.column-option {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba($color-text-medium, 0.08);
+    transition: all 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+        background-color: rgba($color-primary, 0.05);
+        border-color: rgba($color-primary, 0.2);
+    }
+
+    input {
+        width: 1.2rem;
+        height: 1.2rem;
+        margin-right: 1rem;
+        accent-color: $color-primary;
+    }
+
+    span {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+}
+
+/* Responsividad */
+@media (max-width: 1024px) {
+    .table {
+        min-width: 100%;
+
+        th,
+        td {
+            padding: 0.9rem 1rem;
+            font-size: 0.85rem;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .table {
+
+        th,
+        td {
+            padding: 0.75rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .actions-cell {
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    }
+
+    .modal-content {
+        max-width: 90%;
+        padding: 1.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .table-container {
+        padding: 1rem 0;
+    }
+
+    .modal-content {
+        max-width: 95%;
+    }
+
+    .column-option {
+        padding: 0.75rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* CamelCase aliases para React / CSS Modules */
+.tableContainer {
+    @extend .table-container;
+}
+
+.tableWrapper {
+    @extend .table-wrapper;
+}
+
+.nestedHeader {
+    @extend .nested-header;
+}
+
+.actionsHeader {
+    @extend .actions-header;
+}
+
+.actionsCell {
+    @extend .actions-cell;
+}
+
+.arrayItem {
+    @extend .array-item;
+}
+
+.noDataMessage {
+    @extend .no-data-message;
+}
+
+.modalOverlay {
+    @extend .modal-overlay;
+}
+
+.modalContent {
+    @extend .modal-content;
+}
+
+.modalHeader {
+    @extend .modal-header;
+}
+
+.modalBody {
+    @extend .modal-body;
+}
+
+.columnOption {
+    @extend .column-option;
+}

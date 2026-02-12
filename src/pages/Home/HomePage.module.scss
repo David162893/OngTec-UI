@@ -1,0 +1,121 @@
+@use '@/styles/variables' as *;
+
+.homepageContainer {
+  background-color: $color-background;
+  color: $color-text-dark;
+  font-family: 'Roboto', sans-serif;
+}
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4.5rem;
+}
+
+h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.1rem;
+  color: $color-primary;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.25rem;
+  color: $color-text-dark;
+  margin-bottom: 0.75rem;
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: $color-text-medium;
+}
+
+/* ABOUT */
+#about {
+  display: grid;
+  gap: 2.5rem;
+
+  article {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 1.25rem;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  }
+}
+
+/* SERVICES */
+#services {
+  ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  }
+
+  li {
+    background-color: $color-secondary;
+    padding: 2rem;
+    border-radius: 1.25rem;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  }
+}
+
+/* CTA */
+#cta {
+  background-color: $color-primary;
+  color: white;
+  padding: 3rem 2rem;
+  border-radius: 1.75rem;
+  text-align: center;
+
+  h2 {
+    color: white;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 2rem;
+  }
+}
+
+/* FOOTER */
+footer {
+  margin-top: 4rem;
+  background-color: $color-text-dark;
+  color: white;
+  padding: 2.5rem 1.5rem;
+  display: grid;
+  gap: 1.5rem;
+  text-align: center;
+
+  ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 1.25rem;
+    justify-content: center;
+  }
+
+  a {
+    color: $color-secondary;
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-secondary;
+      outline-offset: 2px;
+    }
+  }
+}

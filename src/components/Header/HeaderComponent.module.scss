@@ -1,0 +1,141 @@
+@use '@/styles/variables' as *;
+
+.header {
+  background-color: $color-primary;
+  color: white;
+  padding: 1rem 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+/* FILA SUPERIOR */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* Contenedor título + breadcrumb horizontal */
+.titleWrapper {
+  display: flex;
+  align-items: center; // todo en la misma fila
+  gap: 0.5rem; // espacio entre título y breadcrumb
+  cursor: pointer;
+}
+
+/* LOGO */
+.title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.5rem;
+  color: white;
+  white-space: nowrap;
+}
+
+/* BREADCRUMB */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.75);
+  user-select: none;
+
+  img {
+    width: 16px;
+    height: 16px;
+    margin-right: 0.3rem;
+  }
+
+  span {
+    font-family: 'Roboto', sans-serif;
+    white-space: nowrap;
+  }
+}
+
+/* NAV */
+.headerList {
+  list-style: none;
+  display: flex;
+  gap: 0.6rem;
+  padding: 0;
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+.hero {
+  text-align: center;
+  padding-top: 0.75rem;
+
+  h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+@media (max-width: 768px) {
+  .breadcrumb {
+    font-size: 0.75rem;
+
+    img {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  .title {
+    font-size: 1.3rem;
+  }
+
+  .hero h1 {
+    font-size: 1.45rem;
+  }
+
+  .hero p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .breadcrumb {
+    font-size: 0.7rem;
+
+    img {
+      width: 12px;
+      height: 12px;
+    }
+  }
+
+  .title {
+    font-size: 1.15rem;
+  }
+
+  .hero h1 {
+    font-size: 1.3rem;
+  }
+
+  .hero p {
+    font-size: 0.85rem;
+  }
+
+  .hero button {
+    padding: 0.45rem 1.25rem;
+    font-size: 0.85rem;
+  }
+}

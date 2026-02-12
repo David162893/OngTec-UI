@@ -1,0 +1,303 @@
+@use '@/styles/variables' as *;
+@use 'sass:color';
+
+/* Modal-specific styles */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: $overlay-bg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal {
+  width: 100%;
+  max-width: 480px;
+  border-radius: $card-radius;
+  box-shadow: $shadow-lg;
+  background: white;
+  padding: 2rem;
+  position: relative;
+}
+
+.close-button{
+  position: absolute;
+  right: 1rem;
+  top: 0.75rem;
+  background: transparent;
+  border: 0;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: $color-muted;
+}
+
+.login-page {
+  min-height: 100vh;
+  background-color: $color-background;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  font-family: 'Roboto', sans-serif;
+}
+
+.login-card {
+  background-color: white;
+  padding: 3rem 1.5rem;
+  border-radius: 1.75rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  max-width: 440px;
+  width: 100%;
+}
+
+.login-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.25rem;
+  color: $color-primary;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.login-subtitle {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: $color-text-medium;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-error {
+  background-color: rgba($color-error, 0.1);
+  color: $color-error;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  text-align: center;
+  border: 1px solid rgba($color-error, 0.2);
+}
+
+.login-warning {
+  background-color: rgba($color-action, 0.1);
+  color: $color-action;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  text-align: center;
+  border: 1px solid rgba($color-action, 0.2);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: $color-text-dark;
+}
+
+.form-input {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1rem;
+  padding: 0.875rem 1.125rem;
+  border: 2px solid #E0E0E0;
+  border-radius: 0.75rem;
+  background-color: $color-background;
+  color: $color-text-dark;
+  transition: all 0.2s ease;
+
+  &::placeholder {
+    color: #9E9E9E;
+  }
+
+  &:hover {
+    border-color: #BDBDBD;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+  }
+
+  &:disabled {
+    background-color: #F5F5F5;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.form-button {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 1rem 2rem;
+  background-color: $color-primary;
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba($color-primary, 0.2);
+
+  &:hover {
+    background-color: color.adjust($color-primary, $lightness: -8%);
+    box-shadow: 0 6px 16px rgba($color-primary, 0.3);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba($color-primary, 0.2);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 3px;
+  }
+
+  &:disabled {
+    background-color: #BDBDBD;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+  .login-page {
+    padding: 1.5rem 1rem;
+  }
+
+  .login-card {
+    max-width: 500px;
+    padding: 2.5rem 1.75rem;
+  }
+
+  .login-title {
+    font-size: clamp(1.8rem, 4vw, 2.1rem);
+  }
+
+  .login-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .modal {
+    max-width: 90%;
+    padding: 1.75rem;
+  }
+}
+
+/* Mobile grande */
+@media (max-width: 480px) {
+  .login-page {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .login-card {
+    padding: 2rem 1.25rem;
+    border-radius: 1.25rem;
+  }
+
+  .login-title {
+    font-size: clamp(1.6rem, 5vw, 1.9rem);
+  }
+
+  .login-subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-input {
+    padding: 0.8rem 1rem;
+  }
+
+  .form-button {
+    padding: 0.9rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .modal {
+    max-width: 95%;
+    padding: 1.5rem;
+  }
+}
+
+/* Mobile pequeño (iPhone SE, etc.) */
+@media (max-width: 360px) {
+  .login-card {
+    padding: 1.75rem 1rem;
+  }
+
+  .login-title {
+    font-size: 1.5rem;
+  }
+
+  .login-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .form-input {
+    font-size: 0.95rem;
+  }
+
+  .form-button {
+    font-size: 0.95rem;
+  }
+}
+
+/* Mejor comportamiento del modal en pantallas bajas */
+@media (max-height: 600px) {
+  .overlay {
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+
+  .modal {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+/* Landscape móvil */
+@media (max-height: 500px) and (orientation: landscape) {
+  .login-page {
+    align-items: flex-start;
+    padding-top: 1rem;
+  }
+
+  .login-card {
+    padding: 1.75rem 1.5rem;
+  }
+}
+
+/* CamelCase aliases for JS/React usage (CSS Modules access) */
+.loginPage { @extend .login-page; }
+.loginCard { @extend .login-card; }
+.loginTitle { @extend .login-title; }
+.loginSubtitle { @extend .login-subtitle; }
+.loginError { @extend .login-error; }
+.loginForm { @extend .login-form; }
+.formField { @extend .form-field; }
+.formLabel { @extend .form-label; }
+.formInput { @extend .form-input; }
+.formButton { @extend .form-button; }
+.closeButton { @extend .close-button; }
+.loginWarning { @extend .login-warning; }
