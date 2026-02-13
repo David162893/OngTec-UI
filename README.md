@@ -120,6 +120,7 @@ OngTec/
 ├── src/
 │   ├── components/         # Componentes reutilizables
 │   │   ├── Button/
+│   │   ├── FormModal/
 │   │   ├── Header/
 │   │   ├── Modal/
 │   │   ├── Table/
@@ -127,7 +128,7 @@ OngTec/
 │   ├── context/            # Context API para estado global
 │   │   └── AuthContext.jsx
 │   ├── hooks/              # Custom hooks
-│   │   ├── useClickOutside.js
+│   │   ├── useCloseModal.js
 │   │   ├── useHideOnScroll.js
 │   │   ├── usePersistedColumns.js
 │   │   ├── useTaskMutations.js
@@ -142,7 +143,7 @@ OngTec/
 │   ├── routes/             # Configuración de rutas
 │   │   ├── BreadcrumbLabels.js
 │   │   ├── LinkByRole.js
-│   │   └── ...
+│   │   └── ProtectedRoute.jsx
 │   ├── services/           # Servicios de API
 │   ├── styles/             # SCSS global y variables
 │   ├── utils/              # Funciones utilitarias
@@ -153,6 +154,8 @@ OngTec/
 ├── eslint.config.js        # Configuración ESLint
 ├── vite.config.js          # Configuración Vite
 ├── package.json            # Dependencias del proyecto
+├── LICENSE                 # Licencia del proyecto
+├── TODO                    # Tareas pendientes por realizar
 └── README.md               # Este archivo
 
 ```
@@ -174,14 +177,15 @@ OngTec implementa un sistema de autenticación robusto:
 
 ### Componentes Disponibles
 - **Button** - Botones reutilizables con variantes
+- **FormModal** - Dialogo modular para la representación de campos editables
 - **Header** - Encabezado navegable
-- **Modal** - Diálogos modulares (en desarroyo)
+- **Modal** - Diálogos modulares
 - **Table** - Tablas de datos interactivas
 - **CoudinaryUpload** - Carga de imágenes en la nube
 
 ### Custom Hooks
+- `useCloseModal` - Ocultar/mostrar modal al presionar ESC o al hacer click fuera de este
 - `useHideOnScroll` - Ocultar/mostrar elementos al desplazarse
-- `useClickOutside` - Detectar clicks fuera de elementos
 - `usePersistedColumns` - Persistencia de columnas en tablas
 - `useTaskMutations` - Mutaciones de tareas
 - `useTaskQueries` - Consultas de tareas
@@ -205,7 +209,7 @@ Componente → Custom Hook → API Service → Backend
 
 ## 📝 Contribución
 
-¡Las contribuciones son bienvenidas! Queremos hacer OngTec mejor con tu ayuda.
+¡Las contribuciones son bienvenidas! Quiero hacer OngTec mejor con tu ayuda.
 
 ### Cómo Contribuir
 
@@ -249,7 +253,7 @@ Este proyecto está bajo la **Licencia MIT** - consulta el archivo [LICENSE](./L
 
 - **Versión Actual:** 1.0.0
 - **Estado:** 🟡 En desarrollo activo
-- **Rama principaly en actual desarroyo:** `main`
+- **Rama principal y en actual desarroyo:** `main`
 
 ---
 
@@ -272,7 +276,7 @@ Este proyecto está bajo la **Licencia MIT** - consulta el archivo [LICENSE](./L
 R: Sí, OngTec es un proyecto de código abierto bajo licencia MIT.
 
 **P: ¿Necesito experiencia técnica para usar OngTec?**  
-R: La interfaz está diseñada para ser intuitiva, pero recomendamos apoyo técnico para la instalación inicial.
+R: La interfaz está diseñada para ser intuitiva, pero recomiendo apoyo técnico para la instalación inicial.
 
 **P: ¿Qué navegadores son soportados?**  
 R: Chrome, Firefox, Safari y Edge versiones modernas (últimos 2 años).
@@ -282,19 +286,6 @@ R: Crea un issue en [GitHub Issues](https://github.com/David162893/OngTec/issues
 
 ---
 
-## 🙏 Agradecimientos
-
-- A la comunidad de React y Vite
-- A todos los contribuidores que ayudan a mejorar OngTec
-- A las siguientes librerías que hacen posible este proyecto
-
-
----
-
 **⭐ Si OngTec te resulta útil, considera dejar una estrella en GitHub**
-
----
-
-
 
 ---
