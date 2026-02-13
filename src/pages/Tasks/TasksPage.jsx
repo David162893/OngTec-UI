@@ -26,34 +26,26 @@ export default function TaskPage() {
     return <>
         <TableComponent data={tasks && tasks.length > 0 ? tasks : [
             {
-                key: "mundo",
-                value: {
-                    quiero: "un array",
-                    otro: {
-                        nested: "con objetos anidados",
-                        unomas: "y más niveles"
+                "glossary": {
+                    "title": "example glossary",
+                    "GlossDiv": {
+                        "title": "S",
+                        "GlossList": {
+                            "GlossEntry": {
+                                "ID": "SGML",
+                                "SortAs": "SGML",
+                                "GlossTerm": "Standard Generalized Markup Language",
+                                "Acronym": "SGML",
+                                "Abbrev": "ISO 8879:1986",
+                                "GlossDef": {
+                                    "para": "A meta-markup language, used to create markup languages such as DocBook.",
+                                    "GlossSeeAlso": ["GML", "XML"]
+                                },
+                                "GlossSee": "markup"
+                            }
+                        }
                     }
-                },
-                simple: "texto"
-            },
-            {
-                key: "hola",
-                value: {
-                    quiero: "otro dato",
-                    otro: "más info"
-                },
-                simple: "más texto"
-            },
-            {
-                key: "hola",
-                value: [{
-                    quiero: "otro dato",
-                    otro: {
-                        nested: "con objetos anidados",
-                        unomas: "y más niveles"
-                    }
-                }],
-                simple: "más texto"
+                }
             }
         ]} onEdit={handleTaskEdit} />
         {selectedTask && <FormModal

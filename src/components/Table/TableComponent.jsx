@@ -5,40 +5,29 @@ import { usePersistedColumns } from "@/hooks/usePersistedColumns"
 import styles from "./TableComponent.module.scss"
 
 export default function TableComponent({ data = [], className, onEdit, onDelete, pos, max, ...props }) {
-    console.log("TableComponent renderizado con data:", data)
     const [showColumnSelector, setShowColumnSelector] = useState(false)
 
-    // --- Construir estructura recursiva de columnas (soporta objetos anidados) ---
+    // Construir estructura recursiva de columnas
     const buildStructure = (obj, parentKey = "") => {
-        const structure = {}
-
-        Object.keys(obj).forEach(key => {
+        return Object.entries(obj).reduce((acc, [key, value]) => {
             const fullPath = parentKey ? `${parentKey}.${key}` : key
-            const value = obj[key]
+            const isArray = Array.isArray(value)
+            const isObject = typeof value === "object" && value !== null && !isArray
 
-            if (Array.isArray(value) && value.length > 0 && typeof value[0] === "object") {
-                structure[key] = {
-                    path: fullPath,
-                    children: buildStructure(value[0], fullPath)
-                }
-            }
-            else if (typeof value === "object" && value !== null && !Array.isArray(value)) {
-                structure[key] = {
-                    path: fullPath,
-                    children: buildStructure(value, fullPath)
-                }
-            }
-            else {
-                structure[key] = { path: fullPath, children: null }
-            }
-        })
+            // Solo expandir arrays si contienen objetos, no primitivos
+            const shouldExpandArray = isArray && value.length > 0 && typeof value[0] === "object"
 
-        return structure
+            acc[key] = {
+                path: fullPath,
+                children: shouldExpandArray ? buildStructure(value[0], fullPath) :
+                    isObject ? buildStructure(value, fullPath) : null
+            }
+            return acc
+        }, {})
     }
 
-    // --- Combinar estructura de todas las filas para obtener la estructura global ---
+    // Estructura global combinada
     const globalStructure = useMemo(() => {
-        const combined = {}
         const merge = (target, source) => {
             Object.keys(source).forEach(key => {
                 if (!target[key]) target[key] = source[key]
@@ -48,102 +37,86 @@ export default function TableComponent({ data = [], className, onEdit, onDelete,
                 }
             })
         }
+        const combined = {}
         data.forEach(item => merge(combined, buildStructure(item)))
         return combined
     }, [data])
 
-    // --- Calcular profundidad máxima de headers (para rowspan) ---
+    // Estadísticas de nodos (profundidad y ancho)
     const getStats = (node) => {
-        if (!node.children || Object.keys(node.children).length === 0) return { depth: 1, width: 1 }
-        let width = 0
-        let maxChildDepth = 0
-        Object.values(node.children).forEach(child => {
-            const stats = getStats(child)
-            width += stats.width
-            maxChildDepth = Math.max(maxChildDepth, stats.depth)
-        })
-        return { depth: maxChildDepth + 1, width }
+        if (!node.children || !Object.keys(node.children).length) return { depth: 1, width: 1 }
+        const stats = Object.values(node.children).map(getStats)
+        return {
+            depth: Math.max(...stats.map(s => s.depth)) + 1,
+            width: stats.reduce((sum, s) => sum + s.width, 0)
+        }
     }
 
-    const maxHeaderDepth = useMemo(() => {
-        let max = 0
-        Object.values(globalStructure).forEach(node => {
-            max = Math.max(max, getStats(node).depth)
-        })
-        return max
-    }, [globalStructure])
+    const maxHeaderDepth = useMemo(() =>
+        Math.max(...Object.values(globalStructure).map(node => getStats(node).depth), 0)
+        , [globalStructure])
 
-    // --- Obtener rutas de todas las hojas (columnas finales) ---
+    // Columnas hoja (finales)
     const leafColumns = useMemo(() => {
         const leaves = []
         const findLeaves = (structure) => {
             Object.values(structure).forEach(node => {
-                if (!node.children) leaves.push(node.path)
-                else findLeaves(node.children)
+                if (!node.children) {
+                    const lastKey = node.path.split('.').pop().toLowerCase()
+                    if (lastKey !== "id" && !lastKey.endsWith("id")) leaves.push(node.path)
+                } else findLeaves(node.children)
             })
         }
         findLeaves(globalStructure)
         return leaves
     }, [globalStructure])
 
-    // --- Hook para columnas visibles persistidas ---
     const { visibleColumns, toggleColumn } = usePersistedColumns({
         storageKey: "ongtec_table_columns",
         defaultColumns: leafColumns
     })
 
-    // --- Cerrar selector de columnas al pulsar ESC ---
     useEffect(() => {
-        const handleEsc = (e) => {
-            if (e.key === 'Escape' && showColumnSelector) setShowColumnSelector(false)
-        }
+        const handleEsc = (e) => e.key === 'Escape' && showColumnSelector && setShowColumnSelector(false)
         window.addEventListener('keydown', handleEsc)
         return () => window.removeEventListener('keydown', handleEsc)
     }, [showColumnSelector])
 
-    // --- Función auxiliar para obtener valor de celda según path ---
-    const getValueByPath = (obj, path) => {
-        return path.split('.').reduce((acc, part) => {
+    // Obtener valor por path
+    const getValueByPath = (obj, path) =>
+        path.split('.').reduce((acc, part) => {
             if (!acc) return acc
 
-            // Si es array, aplicar a todos los elementos
-            if (Array.isArray(acc)) {
+            // Si es array de objetos, aplicar recursivamente
+            if (Array.isArray(acc) && acc.length > 0 && typeof acc[0] === "object") {
                 return acc.map(item => item[part])
             }
 
             return acc[part]
         }, obj)
-    }
-
 
     const renderCellValue = (value) => {
-        if (value === null || value === undefined) return "-"
-
-        if (Array.isArray(value))
-            return value.join(", ")
-
-
-        if (typeof value === "object")
-            return JSON.stringify(value)
-
-
+        if (value == null) return "-"
+        if (Array.isArray(value)) return value.join(", ")
+        if (typeof value === "object") return JSON.stringify(value)
         return String(value)
     }
 
+    const getLeafPaths = (node) =>
+        !node.children ? [node.path] : Object.values(node.children).flatMap(getLeafPaths)
 
-    const getLeafPaths = (node) => !node.children ? [node.path] : Object.values(node.children).flatMap(getLeafPaths)
-
-    // --- Generar filas del <thead> respetando columnas visibles ---
+    // Generar filas del header
     const headerRows = useMemo(() => {
         const rows = Array.from({ length: maxHeaderDepth }, () => [])
 
         const fillRows = (structure, level) => {
             Object.entries(structure).forEach(([key, node]) => {
-                const childLeaves = node.children ? Object.values(node.children).flatMap(getLeafPaths) : [node.path]
-                // Ignorar nodos sin hojas visibles
+                const childLeaves = getLeafPaths(node)
                 if (!childLeaves.some(leaf => visibleColumns.includes(leaf))) return
+
                 const width = childLeaves.filter(leaf => visibleColumns.includes(leaf)).length
                 const isLeaf = !node.children || !Object.keys(node.children).length
+
                 rows[level].push({
                     label: key,
                     path: node.path,
@@ -151,6 +124,7 @@ export default function TableComponent({ data = [], className, onEdit, onDelete,
                     rowSpan: isLeaf ? maxHeaderDepth - level : 1,
                     isLeaf
                 })
+
                 if (node.children) fillRows(node.children, level + 1)
             })
         }
@@ -181,7 +155,9 @@ export default function TableComponent({ data = [], className, onEdit, onDelete,
                                     ))}
                                     {i === 0 && (
                                         <th rowSpan={maxHeaderDepth} className={styles.actionsHeader}>
-                                            <ButtonComponent variant="tableToggle" onClick={() => setShowColumnSelector(true)}>⚙️</ButtonComponent>
+                                            <ButtonComponent variant="tableToggle" onClick={() => setShowColumnSelector(true)}>
+                                                ⚙️
+                                            </ButtonComponent>
                                         </th>
                                     )}
                                 </tr>
@@ -194,37 +170,41 @@ export default function TableComponent({ data = [], className, onEdit, onDelete,
                                         <td key={path}>{renderCellValue(getValueByPath(row, path))}</td>
                                     ))}
                                     <td className={styles.actionsCell}>
-                                        <ButtonComponent variant="tableAction" onClick={() => onEdit?.(row, rowIndex)}>Editar</ButtonComponent>
-                                        <ButtonComponent variant="tableAction" onClick={() => onDelete?.(row, rowIndex)}>Eliminar</ButtonComponent>
+                                        <ButtonComponent variant="tableAction" onClick={() => onEdit?.(row, rowIndex)}>
+                                            Editar
+                                        </ButtonComponent>
+                                        <ButtonComponent variant="tableAction" onClick={() => onDelete?.(row, rowIndex)}>
+                                            Eliminar
+                                        </ButtonComponent>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-                    {typeof pos === 'number' && typeof max === 'number' &&
-                        (<>
-                            {props.loadMore &&
-                                <ButtonComponent variant="tableLoadMore" onClick={() => doLoadMore(pos + 10)} className={styles.floatingButtonLoadMore}>
+                    {typeof pos === 'number' && typeof max === 'number' && (
+                        <>
+                            {props.loadMore && (
+                                <ButtonComponent variant="tableLoadMore" onClick={() => props.loadMore(pos + 10)} className={styles.floatingButtonLoadMore}>
                                     Cargar más
                                 </ButtonComponent>
-                            }
-                            {props.reset &&
-                                <ButtonComponent variant="tableReset" onClick={() => doReset(0)} className={styles.floatingButtonStart}>
+                            )}
+                            {props.reset && (
+                                <ButtonComponent variant="tableReset" onClick={() => props.reset(0)} className={styles.floatingButtonStart}>
                                     Inicio
                                 </ButtonComponent>
-                            }
-                            {props.doBefore &&
-                                <ButtonComponent variant="tableBefore" onClick={() => doBefore(pos)} className={styles.floatingButton}>
+                            )}
+                            {props.doBefore && (
+                                <ButtonComponent variant="tableBefore" onClick={() => props.doBefore(pos)} className={styles.floatingButton}>
                                     Cargar menos
                                 </ButtonComponent>
-                            }
-                            {props.doNext &&
-                                <ButtonComponent variant="tableNext" onClick={() => doNext(pos + 10)} className={styles.floatingButtonReset}>
+                            )}
+                            {props.doNext && (
+                                <ButtonComponent variant="tableNext" onClick={() => props.doNext(pos + 10)} className={styles.floatingButtonReset}>
                                     Cargar más
                                 </ButtonComponent>
-                            }
-                        </>)
-                    }
+                            )}
+                        </>
+                    )}
                 </div>
             </div>
 
