@@ -4,22 +4,35 @@ import ModalComponent from "../Modal/ModalComponent"
 import { usePersistedColumns } from "@/hooks/usePersistedColumns"
 import styles from "./TableComponent.module.scss"
 
-export default function TableComponent({ data = [], className, onEdit, onDelete, ...props }) {
+export default function TableComponent({ data = [], className, onEdit, onDelete, pos, max, ...props }) {
+    console.log("TableComponent renderizado con data:", data)
     const [showColumnSelector, setShowColumnSelector] = useState(false)
 
     // --- Construir estructura recursiva de columnas (soporta objetos anidados) ---
     const buildStructure = (obj, parentKey = "") => {
         const structure = {}
+
         Object.keys(obj).forEach(key => {
             const fullPath = parentKey ? `${parentKey}.${key}` : key
             const value = obj[key]
 
-            if (typeof value === 'object' && value !== null && !Array.isArray(value) && Object.keys(value).length > 0) {
-                structure[key] = { path: fullPath, children: buildStructure(value, fullPath) }
-            } else {
+            if (Array.isArray(value) && value.length > 0 && typeof value[0] === "object") {
+                structure[key] = {
+                    path: fullPath,
+                    children: buildStructure(value[0], fullPath)
+                }
+            }
+            else if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+                structure[key] = {
+                    path: fullPath,
+                    children: buildStructure(value, fullPath)
+                }
+            }
+            else {
                 structure[key] = { path: fullPath, children: null }
             }
         })
+
         return structure
     }
 
@@ -89,15 +102,34 @@ export default function TableComponent({ data = [], className, onEdit, onDelete,
     }, [showColumnSelector])
 
     // --- Función auxiliar para obtener valor de celda según path ---
-    const getValueByPath = (obj, path) => path.split('.').reduce((acc, part) => acc && acc[part], obj)
+    const getValueByPath = (obj, path) => {
+        return path.split('.').reduce((acc, part) => {
+            if (!acc) return acc
+
+            // Si es array, aplicar a todos los elementos
+            if (Array.isArray(acc)) {
+                return acc.map(item => item[part])
+            }
+
+            return acc[part]
+        }, obj)
+    }
+
 
     const renderCellValue = (value) => {
         if (value === null || value === undefined) return "-"
-        if (Array.isArray(value)) {
-            return value.map((v, i) => <div key={i} className={styles.arrayItem}>{typeof v === 'object' ? JSON.stringify(v) : String(v)}</div>)
-        }
-        return typeof value === 'object' ? JSON.stringify(value) : String(value)
+
+        if (Array.isArray(value))
+            return value.join(", ")
+
+
+        if (typeof value === "object")
+            return JSON.stringify(value)
+
+
+        return String(value)
     }
+
 
     const getLeafPaths = (node) => !node.children ? [node.path] : Object.values(node.children).flatMap(getLeafPaths)
 
@@ -169,6 +201,30 @@ export default function TableComponent({ data = [], className, onEdit, onDelete,
                             ))}
                         </tbody>
                     </table>
+                    {typeof pos === 'number' && typeof max === 'number' &&
+                        (<>
+                            {props.loadMore &&
+                                <ButtonComponent variant="tableLoadMore" onClick={() => doLoadMore(pos + 10)} className={styles.floatingButtonLoadMore}>
+                                    Cargar más
+                                </ButtonComponent>
+                            }
+                            {props.reset &&
+                                <ButtonComponent variant="tableReset" onClick={() => doReset(0)} className={styles.floatingButtonStart}>
+                                    Inicio
+                                </ButtonComponent>
+                            }
+                            {props.doBefore &&
+                                <ButtonComponent variant="tableBefore" onClick={() => doBefore(pos)} className={styles.floatingButton}>
+                                    Cargar menos
+                                </ButtonComponent>
+                            }
+                            {props.doNext &&
+                                <ButtonComponent variant="tableNext" onClick={() => doNext(pos + 10)} className={styles.floatingButtonReset}>
+                                    Cargar más
+                                </ButtonComponent>
+                            }
+                        </>)
+                    }
                 </div>
             </div>
 

@@ -43,6 +43,17 @@ export default function TaskPage() {
                     otro: "más info"
                 },
                 simple: "más texto"
+            },
+            {
+                key: "hola",
+                value: [{
+                    quiero: "otro dato",
+                    otro: {
+                        nested: "con objetos anidados",
+                        unomas: "y más niveles"
+                    }
+                }],
+                simple: "más texto"
             }
         ]} onEdit={handleTaskEdit} />
         {selectedTask && <FormModal
