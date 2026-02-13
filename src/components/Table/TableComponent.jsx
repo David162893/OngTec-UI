@@ -4,7 +4,7 @@ import ModalComponent from "../Modal/ModalComponent"
 import { usePersistedColumns } from "@/hooks/usePersistedColumns"
 import styles from "./TableComponent.module.scss"
 
-export default function TableComponent({ data = [], className, onEdit, onDelete, pos, max, ...props }) {
+export default function TableComponent({ data = [], hiddenColumns = [], className, onEdit, onDelete, pos, max, ...props }) {
     const [showColumnSelector, setShowColumnSelector] = useState(false)
 
     // Construir estructura recursiva de columnas
@@ -59,17 +59,22 @@ export default function TableComponent({ data = [], className, onEdit, onDelete,
     // Columnas hoja (finales)
     const leafColumns = useMemo(() => {
         const leaves = []
+        const hiddenSet = new Set(hiddenColumns.map(c => c.toLowerCase()))
         const findLeaves = (structure) => {
             Object.values(structure).forEach(node => {
                 if (!node.children) {
                     const lastKey = node.path.split('.').pop().toLowerCase()
-                    if (lastKey !== "id" && !lastKey.endsWith("id")) leaves.push(node.path)
-                } else findLeaves(node.children)
+                    if (!hiddenSet.has(lastKey)) {
+                        leaves.push(node.path)
+                    }
+                } else {
+                    findLeaves(node.children)
+                }
             })
         }
         findLeaves(globalStructure)
         return leaves
-    }, [globalStructure])
+    }, [globalStructure, hiddenColumns])
 
     const { visibleColumns, toggleColumn } = usePersistedColumns({
         storageKey: "ongtec_table_columns",
@@ -86,12 +91,10 @@ export default function TableComponent({ data = [], className, onEdit, onDelete,
     const getValueByPath = (obj, path) =>
         path.split('.').reduce((acc, part) => {
             if (!acc) return acc
-
             // Si es array de objetos, aplicar recursivamente
             if (Array.isArray(acc) && acc.length > 0 && typeof acc[0] === "object") {
                 return acc.map(item => item[part])
             }
-
             return acc[part]
         }, obj)
 
@@ -108,15 +111,12 @@ export default function TableComponent({ data = [], className, onEdit, onDelete,
     // Generar filas del header
     const headerRows = useMemo(() => {
         const rows = Array.from({ length: maxHeaderDepth }, () => [])
-
         const fillRows = (structure, level) => {
             Object.entries(structure).forEach(([key, node]) => {
                 const childLeaves = getLeafPaths(node)
                 if (!childLeaves.some(leaf => visibleColumns.includes(leaf))) return
-
                 const width = childLeaves.filter(leaf => visibleColumns.includes(leaf)).length
                 const isLeaf = !node.children || !Object.keys(node.children).length
-
                 rows[level].push({
                     label: key,
                     path: node.path,
@@ -124,11 +124,9 @@ export default function TableComponent({ data = [], className, onEdit, onDelete,
                     rowSpan: isLeaf ? maxHeaderDepth - level : 1,
                     isLeaf
                 })
-
                 if (node.children) fillRows(node.children, level + 1)
             })
         }
-
         fillRows(globalStructure, 0)
         return rows
     }, [globalStructure, maxHeaderDepth, visibleColumns])

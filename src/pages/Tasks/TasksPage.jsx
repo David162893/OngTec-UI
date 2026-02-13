@@ -47,7 +47,11 @@ export default function TaskPage() {
                     }
                 }
             }
-        ]} onEdit={handleTaskEdit} />
+        ]}
+        hiddenColumns={["id", "countryId"]}
+        onEdit={handleTaskEdit}
+        onDelete={handleTaskDelete}
+        />
         {selectedTask && <FormModal
             open={isModalOpen}
             onClose={() => setIsModalOpen(false)}
