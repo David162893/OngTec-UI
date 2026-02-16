@@ -1,6 +1,7 @@
 import { useState } from "react"
 import TableComponent from "@/components/Table/TableComponent"
 import FormModal from "@/components/FormModal/FormModalComponent"
+import { toast } from "react-toastify"
 import { useUserTasks } from "@/hooks/useTaskQueries"
 import { User } from "@/utils/User"
 
@@ -21,6 +22,10 @@ export default function TaskPage() {
 
     function handleSave(updatedTask) {
         console.log("Tarea actualizada:", updatedTask)
+    }
+
+    function handleTaskDelete(task){
+        toast.info(`Tarea "${task.title}" eliminada`)
     }
 
     return <>
@@ -58,11 +63,7 @@ export default function TaskPage() {
             title="Editar tarea"
             initialData={selectedTask}
             onSubmit={handleSave}
-            fields={[
-                { name: "title", label: "Título" },
-                { name: "description", label: "Descripción" },
-                { name: "status", label: "Estado" }
-            ]}
+            fields={tasks && tasks.length > 0 ? Object.keys(tasks[0]) : []}
         />}
     </>
 }

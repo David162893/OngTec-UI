@@ -1,0 +1,91 @@
+@use 'sass:color';
+@use '@/styles/variables' as *;
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding: 1rem 0.5rem 0.5rem 0.5rem;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.nestedGroup {
+  margin-left: 1.5rem;
+  padding: 1rem 1.25rem;
+  border-left: 4px solid $color-secondary;
+  background: $color-background-alt;
+  border-radius: $radius-md;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+label {
+  font-family: Arial, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: $color-text-medium;
+  letter-spacing: 0.4px;
+  text-transform: capitalize;
+}
+
+strong {
+  color: $color-primary-dark;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  font-family: Arial, sans-serif;
+  font-size: 0.95rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: $radius-md;
+  border: 1px solid $color-border;
+  background: $color-surface;
+  color: $color-text-dark;
+  transition: all $transition-fast;
+  box-shadow: $shadow-sm;
+
+  &:hover {
+    border-color: $color-primary-light;
+    box-shadow: 0 6px 16px rgba(30, 136, 229, 0.08);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px $color-primary-soft;
+    background-color: #fff;
+  }
+}
+
+select {
+  cursor: pointer;
+}
+
+input[type="checkbox"] {
+  accent-color: $color-primary;
+  width: 1.1rem;
+  height: 1.1rem;
+  cursor: pointer;
+  margin-right: 0.5rem;
+}
+
+.fieldGroupCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.2rem;
+
+  label {
+    font-weight: 500;
+    color: $color-text-dark;
+    cursor: pointer;
+  }
+}
