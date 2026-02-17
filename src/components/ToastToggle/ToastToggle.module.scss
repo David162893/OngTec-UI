@@ -1,0 +1,40 @@
+@use 'sass:color';
+@use '@/styles/variables' as *;
+
+.toggleBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: $card-radius;
+    border: 1px solid $color-primary;
+    background-color: transparent;
+    color: $color-primary;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+
+    &:hover {
+        background-color: rgba($color-primary, 0.1);
+    }
+
+    &.disabled {
+        border-color: $color-text-light;
+        color: $color-text-light;
+        
+        &:hover {
+            background-color: rgba($color-text-light, 0.1);
+        }
+    }
+
+    .icon {
+        font-size: 1.2rem;
+    }
+
+    @media (max-width: 480px) {
+        padding: 0.5rem;
+        .text {
+            display: none;
+        }
+    }
+}

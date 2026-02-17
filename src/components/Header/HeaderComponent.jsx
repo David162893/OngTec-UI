@@ -5,6 +5,7 @@ import { LINKS_BY_ROLE } from "@/routes/LinkByRole"
 import { BREADCRUMB_LABELS } from "@/routes/BreadcrumbLabels"
 import { useAuth } from "@/context/AuthContext"
 import useHideOnScroll from "@/hooks/useHideOnScroll"
+import ToastToggle from "@/components/ToastToggle/ToastToggle";
 import homeIcon from "@/assets/home.svg"
 
 export default function HeaderComponent() {
@@ -50,6 +51,7 @@ export default function HeaderComponent() {
                                 </ButtonComponent>
                             </li>
                         ))}
+                        <ToastToggle />
 
                         {isLoggedIn && (
                             <li>

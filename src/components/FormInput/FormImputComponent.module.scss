@@ -1,0 +1,22 @@
+@use 'sass:color';
+@use '@/styles/variables' as *;
+@use '@/styles/imput-mixins' as mixins;
+
+.inputWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+
+    label {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: $color-text-dark;
+    }
+}
+
+.inputText { input { @include mixins.input-base($color-border); } }
+.inputEmail { input { @include mixins.input-base($color-primary-light); } }
+.inputPhone { input { @include mixins.input-base($color-action); } }
+.inputDniNie { input { @include mixins.input-base($color-success); } }
+.inputDate { input { @include mixins.input-base($color-text-medium); } }
+.inputPassword { input { @include mixins.input-base($color-error); } }

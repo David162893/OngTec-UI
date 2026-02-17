@@ -2,6 +2,7 @@ $color-primary: #1E88E5;
 $color-primary-light: #42A5F5;
 $color-primary-dark: #1565C0;
 $color-primary-soft: rgba(30, 136, 229, 0.08);
+$color-primary-ring:  rgba(30, 136, 229, 0.18);
 
 $color-secondary: #90CAF9;
 $color-secondary-light: #BBDEFB;
@@ -36,6 +37,11 @@ $color-error-soft: rgba(229, 57, 53, 0.12);
 $color-muted: #6B7280;
 $color-accent: $color-action;
 
+$color-drum-selector: rgba(30, 136, 229, 0.06);
+
+$color-sep-active: $color-border-strong;
+$color-sep-dim:    $color-border;
+
 $card-radius: 1rem;
 $radius-sm: 0.5rem;
 $radius-md: 0.75rem;
@@ -52,3 +58,7 @@ $header-text-threshold: 60%;
 $transition-fast: 0.15s ease;
 $transition-base: 0.25s ease;
 $transition-slow: 0.35s ease;
+
+$item-h:        52px;
+$panel-radius:  14px;
+$trigger-radius: 10px;

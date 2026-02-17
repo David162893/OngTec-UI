@@ -1,0 +1,79 @@
+@use '@/styles/variables' as *;
+
+.selectWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+
+    label {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: $color-text-dark;
+    }
+}
+
+.customSelect {
+    position: relative;
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    border-radius: $radius-md;
+    border: 1px solid $color-border;
+    background-color: $color-surface-hover;
+    color: $color-text-dark;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: border $transition-fast, box-shadow $transition-fast;
+
+    &:hover {
+        border-color: $color-primary;
+        box-shadow: 0 0 0 2px $color-primary-soft;
+    }
+
+    &.open {
+        border-color: $color-primary;
+        box-shadow: 0 0 0 3px $color-primary-soft;
+    }
+}
+
+.placeholder {
+    color: $color-text-medium;
+}
+
+.arrow {
+    font-size: 0.8rem;
+    color: $color-text-medium;
+}
+
+.optionsList {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    background-color: $color-surface-hover;
+    box-shadow: $shadow-md;
+    z-index: 10;
+}
+
+.optionsList li {
+    padding: 0.6rem 0.9rem;
+    cursor: pointer;
+    transition: background-color $transition-fast;
+
+    &:hover {
+        background-color: $color-primary-soft;
+    }
+}
+
+.optionsList li.active {
+    font-weight: 600;
+    background-color: $color-primary-soft;
+}

@@ -202,6 +202,64 @@
   }
 }
 
+%toast-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.05rem;
+  font-size: 0.85rem;
+  border-radius: 999px;
+  cursor: pointer;
+  border: none;
+  min-width: 80px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.toast-on {
+  @extend %toast-base;
+  background-color: rgba($color-action, 0.15);
+  color: color.adjust($color-action, $lightness: -20%);
+  border: 1px solid rgba($color-action, 0.2);
+
+  &:hover {
+    background-color: rgba($color-action, 0.25);
+    transform: translateY(-1px);
+  }
+}
+
+.toast-off {
+  @extend %toast-base;
+  background-color: rgba($color-text-light, 0.1);
+  color: $color-text-light;
+  border: 1px solid rgba($color-text-light, 0.1);
+
+  &:hover {
+    background-color: rgba($color-text-light, 0.2);
+    transform: translateY(-1px);
+  }
+}
+
+.submit-btn {
+    padding: 0.75rem 1.5rem;
+    background-color: #1E88E5;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover:not(:disabled) {
+        background-color: #1565C0;
+    }
+
+    &:disabled {
+        background-color: #90CAF9;
+        cursor: not-allowed;
+    }
+}
 
 /* CamelCase aliases para React / CSS Modules */
 .primaryLittle { @extend .primary-little; }
@@ -211,3 +269,6 @@
 .tableToggle { @extend .table-toggle; }
 .modalClose { @extend .modal-close; }
 .modalSave { @extend .button-modalSave; }
+.toastOn { @extend .toast-on; }
+.toastOff { @extend .toast-off; }
+.submitBtn { @extend .submit-btn; }

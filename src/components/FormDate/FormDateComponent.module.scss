@@ -1,0 +1,44 @@
+@use 'sass:color';
+@use '@/styles/variables' as *;
+
+.inputWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+
+    > label {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: $color-text-dark;
+    }
+}
+
+.required {
+    margin-left: 0.2rem;
+    color: $color-error;
+    font-weight: 700;
+}
+.drumRow {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.15rem;
+}
+
+.drumYear  { flex: 0 0 5.4rem; }
+.drumMonth { flex: 0 0 8.4rem; }
+.drumDay   { flex: 0 0 4rem;   }
+
+.sep {
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: $color-border-strong;
+    padding-bottom: 0.55rem;
+    padding-inline: 0.1rem;
+    transition: color $transition-base;
+    user-select: none;
+    flex-shrink: 0;
+
+    &.sepDim {
+        color: $color-border;
+    }
+}
