@@ -188,7 +188,7 @@ export default function FormModal({
                     renderField(key, value)
                 )}
 
-                <ButtonComponent onClick={handleSubmit}>
+                <ButtonComponent variant="modalSave" onClick={handleSubmit}>
                     Guardar
                 </ButtonComponent>
             </div>

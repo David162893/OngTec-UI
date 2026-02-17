@@ -169,6 +169,40 @@
   }
 }
 
+/* Modal Save Button */
+.button-modalSave {
+  font-family: Arial, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.65rem 1.25rem;
+  border-radius: $card-radius;
+  border: none;
+  cursor: pointer;
+  background-color: $color-action;
+  color: $color-text-dark;
+  transition: all $transition-base;
+  box-shadow: $shadow-sm;
+
+  &:hover {
+    background-color: $color-action-dark;
+    box-shadow: $shadow-md;
+  }
+
+  &:active {
+    background-color: $color-action-dark;
+    box-shadow: $shadow-sm;
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    background-color: $color-muted;
+    cursor: not-allowed;
+    box-shadow: none;
+    color: $color-text-light;
+  }
+}
+
+
 /* CamelCase aliases para React / CSS Modules */
 .primaryLittle { @extend .primary-little; }
 .headerBtn { @extend .header-btn; }
@@ -176,3 +210,4 @@
 .tableAction { @extend .table-action; }
 .tableToggle { @extend .table-toggle; }
 .modalClose { @extend .modal-close; }
+.modalSave { @extend .button-modalSave; }

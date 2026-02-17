@@ -24,10 +24,10 @@ export default function HeaderComponent() {
             <div className={styles.topBar}>
                 <div className={styles.titleWrapper}>
                     <h1 className={styles.title} onClick={() => navigate("/")}>OngTec</h1>
-                    <div className={styles.breadcrumb}>
+                    {/* <div className={styles.breadcrumb}>
                         <img src={homeIcon} alt="Inicio" />
                         <span>/ {pathName}</span>
-                    </div>
+                    </div> */}
                 </div>
 
 
