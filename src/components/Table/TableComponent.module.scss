@@ -46,7 +46,7 @@
     }
 
     th {
-        text-align: center; 
+        text-align: center;
         vertical-align: middle;
     }
 
@@ -54,11 +54,21 @@
         @for $i from 1 through 8 {
             tr:nth-child(#{$i}) th {
                 @include mixins.header-level-style($i);
-                font-weight: if($i ==1, 700, 600);
-                font-size: if($i ==1, 0.95rem, 0.85rem);
-                text-transform: if($i ==1, uppercase, none);
-                letter-spacing: if($i ==1, 0.5px, normal);
                 white-space: nowrap;
+
+                @if $i ==1 {
+                    font-weight: 700;
+                    font-size: 0.95rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+
+                @else {
+                    font-weight: 600;
+                    font-size: 0.85rem;
+                    text-transform: none;
+                    letter-spacing: normal;
+                }
 
                 &.nested-header {
                     text-align: center;
