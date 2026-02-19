@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react"
+import { useState, useCallback, useRef, useId } from "react"
 import styles from "./FormImputComponent.module.scss"
 import useAutoSize from "@/hooks/useAutoSize"
 
@@ -17,6 +17,9 @@ export default function FormInputComponent({
     inputMinWidth = 50,
     inputMaxWidth = 300
 }) {
+    const generatedId = useId()
+    const inputId = name || generatedId
+
     const { ref, width, onChange: autoSizeChange } = useAutoSize({
         min: inputMinWidth,
         max: inputMaxWidth
@@ -30,14 +33,14 @@ export default function FormInputComponent({
     return (
         <div className={`${styles.inputWrapper} ${wrapperClassName}`}>
             {label && (
-                <label htmlFor={name}>
+                <label htmlFor={inputId}>
                     {label}
                 </label>
             )}
 
             <input
                 ref={autoSize ? ref : undefined}
-                id={name}
+                id={inputId}
                 name={name}
                 type={type}
                 value={value}
