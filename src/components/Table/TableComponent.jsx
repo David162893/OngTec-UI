@@ -56,17 +56,13 @@ export default function TableComponent({ data = [], hiddenColumns = [], classNam
         Math.max(...Object.values(globalStructure).map(node => getStats(node).depth), 0)
         , [globalStructure])
 
-    // Columnas hoja (finales)
-    const leafColumns = useMemo(() => {
+    // Todas las columnas hoja SIN filtrar (para el modal)
+    const allLeafColumns = useMemo(() => {
         const leaves = []
-        const hiddenSet = new Set(hiddenColumns.map(c => c.toLowerCase()))
         const findLeaves = (structure) => {
             Object.values(structure).forEach(node => {
                 if (!node.children) {
-                    const lastKey = node.path.split('.').pop().toLowerCase()
-                    if (!hiddenSet.has(lastKey)) {
-                        leaves.push(node.path)
-                    }
+                    leaves.push(node.path)
                 } else {
                     findLeaves(node.children)
                 }
@@ -74,7 +70,16 @@ export default function TableComponent({ data = [], hiddenColumns = [], classNam
         }
         findLeaves(globalStructure)
         return leaves
-    }, [globalStructure, hiddenColumns])
+    }, [globalStructure])
+
+    // Columnas hoja filtrando hiddenColumns (para la tabla)
+    const leafColumns = useMemo(() => {
+        const hiddenSet = new Set(hiddenColumns.map(c => c.toLowerCase()))
+        return allLeafColumns.filter(path => {
+            const lastKey = path.split('.').pop().toLowerCase()
+            return !hiddenSet.has(lastKey)
+        })
+    }, [allLeafColumns, hiddenColumns])
 
     const { visibleColumns, toggleColumn } = usePersistedColumns({
         storageKey: "ongtec_table_columns",
@@ -210,6 +215,7 @@ export default function TableComponent({ data = [], hiddenColumns = [], classNam
                 open={showColumnSelector}
                 onClose={() => setShowColumnSelector(false)}
                 title="Configurar columnas"
+                className={styles.columnSelectorModal}
             >
                 <div className={styles.columnSelectorBody}>
                     {leafColumns.map(col => (

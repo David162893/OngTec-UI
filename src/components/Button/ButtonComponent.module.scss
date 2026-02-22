@@ -207,7 +207,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.5rem 1.05rem;
+  padding: 0.4rem;
   font-size: 0.85rem;
   border-radius: 999px;
   cursor: pointer;
@@ -231,12 +231,12 @@
 
 .toast-off {
   @extend %toast-base;
-  background-color: rgba($color-text-light, 0.1);
-  color: $color-text-light;
+  background-color: rgba($color-text-medium, 0.3);
+  color: $color-text-medium;
   border: 1px solid rgba($color-text-light, 0.1);
 
   &:hover {
-    background-color: rgba($color-text-light, 0.2);
+    background-color: rgba($color-text-medium, 0.5);
     transform: translateY(-1px);
   }
 }
@@ -261,6 +261,135 @@
     }
 }
 
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: $color-primary;
+  color: $color-text-inverse;
+  border: none;
+  border-radius: $radius-md;
+  padding: 0.75rem 1.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color $transition-fast, box-shadow $transition-fast, transform $transition-fast;
+
+  &:hover {
+    background-color: $color-primary-dark;
+    box-shadow: $shadow-sm;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+}
+
+.edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: $color-primary-soft;
+  color: $color-primary;
+  border: 1px solid $color-primary-ring;
+  border-radius: $radius-md;
+  padding: 0.75rem 1.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color $transition-fast,
+    box-shadow $transition-fast,
+    transform $transition-fast;
+
+  &:hover {
+    background-color: rgba($color-primary, 0.14);
+    box-shadow: $shadow-sm;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+
+  &:focus-visible {
+    outline: 3px solid $color-primary-ring;
+    outline-offset: 2px;
+  }
+}
+
+.cancel-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: transparent;
+  color: $color-text-light;
+  border: 1px solid $color-border-strong;
+  border-radius: $radius-md;
+  padding: 0.75rem 1.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color $transition-fast,
+    border-color $transition-fast,
+    color $transition-fast,
+    transform $transition-fast;
+
+  &:hover {
+    background-color: $color-surface-hover;
+    border-color: $color-muted;
+    color: $color-text-medium;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus-visible {
+    outline: 3px solid $color-border-strong;
+    outline-offset: 2px;
+  }
+}
+
+.change-password-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: transparent;
+  color: $color-text-light;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    color $transition-fast,
+    border-color $transition-fast,
+    background-color $transition-fast;
+
+  &::before {
+    content: "🔒";
+    font-size: 0.85rem;
+  }
+
+  &:hover {
+    color: $color-primary;
+    border-color: $color-primary-ring;
+    background-color: $color-primary-soft;
+  }
+
+  &:focus-visible {
+    outline: 3px solid $color-primary-ring;
+    outline-offset: 2px;
+  }
+}
+
 /* CamelCase aliases para React / CSS Modules */
 .primaryLittle { @extend .primary-little; }
 .headerBtn { @extend .header-btn; }
@@ -272,3 +401,7 @@
 .toastOn { @extend .toast-on; }
 .toastOff { @extend .toast-off; }
 .submitBtn { @extend .submit-btn; }
+.backBtn { @extend .back-btn; }
+.editBtn   { @extend .edit-btn; }
+.cancelBtn { @extend .cancel-btn; }
+.changePasswordBtn { @extend .change-password-btn; }

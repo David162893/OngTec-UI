@@ -19,21 +19,20 @@
 
 /* --- Modal Content --- */
 .modal__content {
-  display: inline-block;     
-  width: auto;               
-  min-width: 320px;          // nunca demasiado pequeño
-  max-width: 95vw;           // máximo 95% de la pantalla
-  max-height: 90vh;          
-  overflow-y: auto;          // scroll vertical si es muy alto
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  min-width: 320px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
   border-radius: $card-radius;
   box-shadow: $shadow-lg;
   background: $color-background;
   position: relative;
-  display: flex;
-  flex-direction: column;
   animation: modal__appear 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  padding: 2rem;             // padding interno generoso
-  box-sizing: border-box;     // asegura que padding no afecte ancho
+  padding: 2rem;
+  box-sizing: border-box;
 }
 
 /* --- Header --- */
@@ -92,7 +91,6 @@
 
 @media (max-width: 768px) {
   .modal__content {
-    width: 90vw;           // ocupa más espacio en tablet
     min-width: auto;       // deja que se adapte
   }
 }
@@ -104,7 +102,6 @@
   }
 
   .modal__content {
-    width: 95vw;           // ocupa casi toda la pantalla
     min-width: auto;
     padding: 1rem 1.25rem;
     border-radius: 1.25rem 1.25rem 0 0;

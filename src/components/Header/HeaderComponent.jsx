@@ -1,5 +1,5 @@
 import styles from "./HeaderComponent.module.scss"
-import { useNavigate, useLocation } from "react-router-dom"
+import { useNavigate, useLocation, Link } from "react-router-dom"
 import ButtonComponent from "../Button/ButtonComponent"
 import { LINKS_BY_ROLE } from "@/routes/LinkByRole"
 import { BREADCRUMB_LABELS } from "@/routes/BreadcrumbLabels"
@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext"
 import useHideOnScroll from "@/hooks/useHideOnScroll"
 import ToastToggle from "@/components/ToastToggle/ToastToggle";
 import homeIcon from "@/assets/home.svg"
+import profileIcon from "@/assets/profile.svg"
 
 export default function HeaderComponent() {
     const navigate = useNavigate()
@@ -51,22 +52,29 @@ export default function HeaderComponent() {
                                 </ButtonComponent>
                             </li>
                         ))}
-                        <ToastToggle />
 
                         {isLoggedIn && (
-                            <li>
-                                <ButtonComponent
-                                    type="button"
-                                    variant="logoutBtn"
-                                    onClick={() => {
-                                        logout()
-                                        navigate("/")
-                                    }}
-                                >
-                                    Salir
-                                </ButtonComponent>
-                            </li>
+                            <>
+                                <li>
+                                    <ButtonComponent
+                                        type="button"
+                                        variant="logoutBtn"
+                                        onClick={() => {
+                                            logout()
+                                            navigate("/")
+                                        }}
+                                    >
+                                        Salir
+                                    </ButtonComponent>
+                                </li>
+                                <li>
+                                    <Link to="/profile" className={styles.profileLink}>
+                                        <img src={profileIcon} alt="Mi perfil" />
+                                    </Link>
+                                </li>
+                            </>
                         )}
+                        <ToastToggle />
                     </ul>
                 </nav>
             </div>

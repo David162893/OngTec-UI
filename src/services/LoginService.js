@@ -1,6 +1,6 @@
 import { API_LOGIN } from "../utils/Paths"
 
-const LoginService = {
+export const LoginService = {
   async getLoginData(email, password) {
     const res = await fetch(API_LOGIN, {
       method: "POST",

@@ -16,8 +16,7 @@ export default function useDrumRoll({ items, value, onChange, disabled }) {
     })
     const rafRef = useRef(null)
     const snapTimer = useRef(null)
-    const isSnapping = useRef(false)
-    const initializedRef = useRef(false)
+    const inertiaActive = useRef(false)
 
     const [scrollIdx, setScrollIdx] = useState(() => {
         const i = items.findIndex(it => it.value === String(value))
@@ -35,43 +34,28 @@ export default function useDrumRoll({ items, value, onChange, disabled }) {
         const target = i >= 0 ? i : 0
         listRef.current.scrollTop = target * ITEM_H
         setScrollIdx(target)
-        initializedRef.current = true
     }, [items, value])
 
-    useEffect(() => {
-        initializedRef.current = false
-    }, [items])
-
-    const confirmCurrent = useCallback(() => {
+    const snapToIndex = useCallback((idx) => {
         if (!listRef.current) return
-        const idx = Math.round(listRef.current.scrollTop / ITEM_H)
         const clamped = Math.max(0, Math.min(idx, items.length - 1))
-        listRef.current.scrollTop = clamped * ITEM_H
-        setScrollIdx(clamped)
-        if (items[clamped]) onChange(items[clamped].value)
-    }, [items, onChange])
-
-    const doSnapVisual = useCallback(() => {
-        if (!listRef.current || isSnapping.current) return
-        const raw = listRef.current.scrollTop
-        const idx = Math.round(raw / ITEM_H)
-        const clamped = Math.max(0, Math.min(idx, items.length - 1))
+        const start = listRef.current.scrollTop
         const target = clamped * ITEM_H
+        const distance = target - start
 
-        if (Math.abs(raw - target) < 0.5) {
+        if (Math.abs(distance) < 1) {
             listRef.current.scrollTop = target
             setScrollIdx(clamped)
+            if (items[clamped]) onChange(items[clamped].value)
             return
         }
 
-        isSnapping.current = true
-        const start = raw
-        const distance = target - start
-        const duration = Math.min(200, Math.max(80, Math.abs(distance) * 1.2))
+        const duration = Math.min(250, Math.max(80, Math.abs(distance) * 1.2))
         const startTime = performance.now()
         const easeOut = (t) => 1 - Math.pow(1 - t, 3)
 
         const animate = (now) => {
+            if (!listRef.current) return
             const p = Math.min((now - startTime) / duration, 1)
             listRef.current.scrollTop = start + distance * easeOut(p)
             setScrollIdx(readIdx())
@@ -80,32 +64,56 @@ export default function useDrumRoll({ items, value, onChange, disabled }) {
             } else {
                 listRef.current.scrollTop = target
                 setScrollIdx(clamped)
-                isSnapping.current = false
+                if (items[clamped]) onChange(items[clamped].value)
             }
         }
         rafRef.current = requestAnimationFrame(animate)
-    }, [items.length, readIdx])
+    }, [items, onChange, readIdx])
+
+    const confirmCurrent = useCallback(() => {
+        if (!listRef.current) return
+        const idx = readIdx()
+        const clamped = Math.max(0, Math.min(idx, items.length - 1))
+        snapToIndex(clamped)
+    }, [items, readIdx, snapToIndex])
 
     const runInertia = useCallback(() => {
-        if (!listRef.current) return
+        if (!listRef.current) {
+            inertiaActive.current = false
+            return
+        }
         const d = dragRef.current
-        d.vel *= 0.90
+        const speed = Math.abs(d.vel)
+        const friction = speed > 8 ? 0.92 : speed > 3 ? 0.95 : 0.92
+        d.vel *= friction
         listRef.current.scrollTop += d.vel
-        setScrollIdx(readIdx())
+        const maxScroll = (items.length - 1) * ITEM_H
+        if (listRef.current.scrollTop < 0) {
+            listRef.current.scrollTop = 0
+            d.vel = 0
+        } else if (listRef.current.scrollTop > maxScroll) {
+            listRef.current.scrollTop = maxScroll
+            d.vel = 0
+        }
 
-        if (Math.abs(d.vel) > 0.3) {
+        const idx = readIdx()
+        setScrollIdx(idx)
+        if (items[idx]) onChange(items[idx].value)
+
+        if (Math.abs(d.vel) > 0.15) {
             rafRef.current = requestAnimationFrame(runInertia)
         } else {
             d.vel = 0
-            doSnapVisual()
+            inertiaActive.current = false
+            snapToIndex(readIdx())
         }
-    }, [doSnapVisual, readIdx])
+    }, [items, onChange, readIdx, snapToIndex])
 
     const onPointerDown = useCallback((e) => {
         if (disabled) return
         cancelAnimationFrame(rafRef.current)
         clearTimeout(snapTimer.current)
-        isSnapping.current = false
+        inertiaActive.current = false
 
         e.currentTarget.setPointerCapture(e.pointerId)
         const d = dragRef.current
@@ -122,23 +130,31 @@ export default function useDrumRoll({ items, value, onChange, disabled }) {
         if (!d.active || !listRef.current) return
         listRef.current.scrollTop = d.startScroll + (d.startY - e.clientY)
         const dt = e.timeStamp - d.lastT
-        if (dt > 0) d.vel = ((d.lastY - e.clientY) / dt) * 16
+        if (dt > 0) {
+            const rawVel = ((d.lastY - e.clientY) / dt) * 16
+            d.vel = d.vel * 0.6 + rawVel * 0.4
+        }
         d.lastY = e.clientY
         d.lastT = e.timeStamp
-        setScrollIdx(readIdx())
-    }, [readIdx])
+
+        const idx = readIdx()
+        setScrollIdx(idx)
+        if (items[idx]) onChange(items[idx].value)
+    }, [readIdx, items, onChange])
 
     const onPointerUp = useCallback(() => {
         const d = dragRef.current
         if (!d.active) return
         d.active = false
 
-        if (Math.abs(d.vel) > 1) {
+        if (Math.abs(d.vel) > 0.5) {
+            d.vel *= 1.4
+            inertiaActive.current = true
             rafRef.current = requestAnimationFrame(runInertia)
         } else {
-            doSnapVisual()
+            snapToIndex(readIdx())
         }
-    }, [runInertia, doSnapVisual])
+    }, [runInertia, snapToIndex, readIdx])
 
     const attachWheel = useCallback((node) => {
         if (!node) return
@@ -148,54 +164,26 @@ export default function useDrumRoll({ items, value, onChange, disabled }) {
             e.stopPropagation()
 
             cancelAnimationFrame(rafRef.current)
-            isSnapping.current = false
+            inertiaActive.current = false
 
             const delta = Math.sign(e.deltaY)
             const current = Math.round(listRef.current.scrollTop / ITEM_H)
             const next = Math.max(0, Math.min(current + delta, items.length - 1))
 
             dragRef.current.vel = 0
-            listRef.current.scrollTop = next * ITEM_H
-            setScrollIdx(next)
-
-            clearTimeout(snapTimer.current)
-            snapTimer.current = setTimeout(() => {
-                if (items[next]) onChange(items[next].value)
-            }, 80)
+            snapToIndex(next)
         }
         node.addEventListener("wheel", handler, { passive: false })
         return () => node.removeEventListener("wheel", handler)
-    }, [disabled, items, onChange])
+    }, [disabled, items, snapToIndex])
 
     const onItemClick = useCallback((idx) => {
         if (disabled) return
-        const clamped = Math.max(0, Math.min(idx, items.length - 1))
         cancelAnimationFrame(rafRef.current)
-        isSnapping.current = false
-
-        const start = listRef.current.scrollTop
-        const target = clamped * ITEM_H
-        const distance = target - start
-        const duration = Math.min(180, Math.max(60, Math.abs(distance) * 1.0))
-        const startTime = performance.now()
-        const easeOut = (t) => 1 - Math.pow(1 - t, 3)
-
-        isSnapping.current = true
-        const animate = (now) => {
-            const p = Math.min((now - startTime) / duration, 1)
-            listRef.current.scrollTop = start + distance * easeOut(p)
-            setScrollIdx(readIdx())
-            if (p < 1) {
-                rafRef.current = requestAnimationFrame(animate)
-            } else {
-                listRef.current.scrollTop = target
-                setScrollIdx(clamped)
-                isSnapping.current = false
-                if (items[clamped]) onChange(items[clamped].value)
-            }
-        }
-        rafRef.current = requestAnimationFrame(animate)
-    }, [disabled, items, onChange, readIdx])
+        inertiaActive.current = false
+        dragRef.current.vel = 0
+        snapToIndex(idx)
+    }, [disabled, snapToIndex])
 
     const onKeyDown = useCallback((e) => {
         if (disabled) return

@@ -1,5 +1,5 @@
-@use '@/styles/variables' as *;
-@use '@/styles/table-mixins' as mixins;
+@use '@/styles/variables'as *;
+@use '@/styles/table-mixins'as mixins;
 @use 'sass:color';
 
 /* Contenedores */
@@ -56,7 +56,7 @@
                 @include mixins.header-level-style($i);
                 white-space: nowrap;
 
-                @if $i ==1 {
+                @if $i==1 {
                     font-weight: 700;
                     font-size: 0.95rem;
                     text-transform: uppercase;
@@ -225,6 +225,22 @@
     }
 }
 
+/* Selector de columnas modal */
+.column-selector-modal {
+    width: 550px !important;
+    max-width: 90vw !important;
+}
+
+.column-selector-body {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+}
+
+.columnSelectorBody {
+    @extend .column-selector-body;
+}
+
 /* Responsividad */
 @media (max-width: 1024px) {
     .table {
@@ -322,4 +338,12 @@
 
 .columnOption {
     @extend .column-option;
+}
+
+.columnSelectorModal {
+    @extend .column-selector-modal;
+}
+
+.columnSelectorBody {
+    @extend .column-selector-body;
 }

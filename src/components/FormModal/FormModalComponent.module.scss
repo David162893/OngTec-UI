@@ -1,10 +1,24 @@
 @use 'sass:color';
 @use '@/styles/variables' as *;
+
+.formModal {
+  width: 650px;
+  max-width: 95vw;
+}
+
 .formContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 1.75rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
   padding: 1rem 0.5rem 0.5rem 0.5rem;
+
+  > button {
+    grid-column: 1 / -1;
+  }
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
 }
 
 .fieldGroup {
@@ -14,14 +28,17 @@
 }
 
 .nestedGroup {
-  margin-left: 1.5rem;
   padding: 1rem 1.25rem;
   border-left: 4px solid $color-secondary;
   background: $color-background-alt;
   border-radius: $radius-md;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+
+  > label:first-child {
+    grid-column: 1 / -1;
+  }
 }
 
 label {
@@ -51,6 +68,8 @@ select {
   color: $color-text-dark;
   transition: all $transition-fast;
   box-shadow: $shadow-sm;
+  width: 100%;
+  box-sizing: border-box;
 
   &:hover {
     border-color: $color-primary-light;

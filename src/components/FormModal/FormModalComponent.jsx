@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import "./FormModalComponent.module.scss"
+import styles from "./FormModalComponent.module.scss"
 import ModalComponent from "@/components/Modal/ModalComponent"
 import ButtonComponent from "@/components/Button/ButtonComponent"
 
@@ -42,6 +42,8 @@ export default function FormModal({
         })
     }
 
+    const fullWidthStringKeys = ["description", "location"]
+
     function renderField(key, value, parentPath = "") {
         const path = parentPath ? `${parentPath}.${key}` : key
 
@@ -56,7 +58,7 @@ export default function FormModal({
                     getNestedValue(formData, path) ?? value[0]
 
                 return (
-                    <div key={path}>
+                    <div key={path} className={styles.fieldGroup}>
                         <label>{key}</label>
                         <select
                             value={selectedValue}
@@ -73,7 +75,7 @@ export default function FormModal({
             }
 
             return (
-                <div key={path} style={{ marginLeft: 20 }}>
+                <div key={path} className={`${styles.nestedGroup} ${styles.fullWidth}`}>
                     <label><strong>{key}</strong></label>
                     {value.map((item, index) =>
                         renderField(index, item, path)
@@ -85,7 +87,7 @@ export default function FormModal({
         // 🟣 OBJETO ANIDADO
         if (typeof value === "object" && value !== null) {
             return (
-                <div key={path} style={{ marginLeft: 20 }}>
+                <div key={path} className={`${styles.nestedGroup} ${styles.fullWidth}`}>
                     <label><strong>{key}</strong></label>
                     {Object.entries(value).map(([childKey, childValue]) =>
                         renderField(childKey, childValue, path)
@@ -100,17 +102,14 @@ export default function FormModal({
                 getNestedValue(formData, path) ?? value
 
             return (
-                <div key={path}>
-                    <label>
-                        <input
-                            type="checkbox"
-                            checked={checked}
-                            onChange={e =>
-                                handleChange(path, e.target.checked)
-                            }
-                        />
-                        {key}
-                    </label>
+                <div key={path} className={styles.fieldGroupCheckbox}>
+                    <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={e => handleChange(path, e.target.checked)}
+                        id={path}
+                    />
+                    <label htmlFor={path}>{key}</label>
                 </div>
             )
         }
@@ -121,7 +120,7 @@ export default function FormModal({
                 getNestedValue(formData, path) ?? value
 
             return (
-                <div key={path}>
+                <div key={path} className={styles.fieldGroup}>
                     <label>{key}</label>
                     <input
                         type="number"
@@ -139,7 +138,7 @@ export default function FormModal({
             getNestedValue(formData, path) ?? value ?? ""
 
         return (
-            <div key={path}>
+            <div key={path} className={`${styles.fieldGroup} ${fullWidthStringKeys.includes(key) ? styles.fullWidth : ""}`}>
                 <label>{key}</label>
                 <input
                     type="text"
@@ -182,8 +181,8 @@ export default function FormModal({
     }
 
     return (
-        <ModalComponent open={open} onClose={onClose} title={title}>
-            <div>
+        <ModalComponent open={open} onClose={onClose} title={title} className={styles.formModal}>
+            <div className={styles.formContainer}>
                 {Object.entries(initialData).map(([key, value]) =>
                     renderField(key, value)
                 )}

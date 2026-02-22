@@ -1,25 +1,27 @@
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import { RoleService } from "@/services/RoleService"
+import { handleError } from "@/utils/errorHandler"
 
 export function useGetRoles() {
-
     const [roles, setRoles] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
     useEffect(() => {
+        const controller = new AbortController()
 
         const fetchRoles = async () => {
             try {
                 setLoading(true)
-                const data = await RoleService.getAll()
-                toast.success("Roles cargados correctamente")
-                setRoles(data || [])
                 setError(null)
+                const data = await RoleService.getAll()
+                setRoles(data || [])
             } catch (err) {
-                toast.error("Error al cargar los roles")
-                setError(err)
+                if (err.name === "AbortError") return
+                const message = handleError(err)
+                setError(message)
+                toast.error(message)
                 setRoles([])
             } finally {
                 setLoading(false)
@@ -27,6 +29,8 @@ export function useGetRoles() {
         }
 
         fetchRoles()
+
+        return () => controller.abort()
 
     }, [])
 

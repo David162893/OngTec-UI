@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
-import { toast } from "react-toastify";
-import { TasksService } from "@/services/TaskService"
+import { toast } from "react-toastify"
+import { TaskService } from "@/services/TaskService"
+import { handleError } from "@/utils/errorHandler"
 
 export function useUserTasks(userId) {
-
     const [tasks, setTasks] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
@@ -14,16 +14,20 @@ export function useUserTasks(userId) {
             return
         }
 
+        const controller = new AbortController()
+
         const fetchTasks = async () => {
             try {
                 setLoading(true)
-                const data = await TasksService.getUserTasks(userId)
-                toast.success("Tareas cargadas correctamente");
-                setTasks(data || [])
                 setError(null)
+                const data = await TaskService.getUserTasks(userId)
+                console.log("Tareas obtenidas:", data)
+                setTasks(data || [])
             } catch (err) {
-                toast.error("Error al cargar las tareas del usuario");
-                setError(err)
+                if (err.name === "AbortError") return
+                const message = handleError(err)
+                setError(message)
+                toast.error(message)
                 setTasks([])
             } finally {
                 setLoading(false)
@@ -31,6 +35,9 @@ export function useUserTasks(userId) {
         }
 
         fetchTasks()
+
+        return () => controller.abort()
+
     }, [userId])
 
     return { tasks, loading, error }

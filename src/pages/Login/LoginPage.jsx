@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import styles from "./LoginPage.module.scss"
-import LoginService from "@/services/LoginService"
+import useLogin from "@/hooks/useAuth"
 import ButtonComponent from "@/components/Button/ButtonComponent"
 import { useAuth } from "@/context/AuthContext"
 import ModalComponent from "@/components/Modal/ModalComponent"
@@ -11,6 +11,7 @@ export default function LoginModal({ open, onClose }) {
     const [password, setPassword] = useState("")
     const [error, setError] = useState(null)
 
+    const { mutate: loginMutate, loading, error: loginError } = useLogin()
     const navigate = useNavigate()
     const location = useLocation()
     const { login } = useAuth()
@@ -31,18 +32,14 @@ export default function LoginModal({ open, onClose }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        if (!email || !password) {
-            setError("Introduce tu correo y contraseña")
-            return
-        }
+        if (!email || !password) return
 
         try {
-            setError(null)
-            const data = await LoginService.getLoginData(email, password)
+            const data = await loginMutate(email, password)
 
             if (data.user) {
                 const rolNombre = data.user.rol?.name?.toUpperCase() || ""
-                let userRole = (rolNombre === "ADMINISTRADOR" || rolNombre === "ADMIN")
+                const userRole = (rolNombre === "ADMINISTRADOR" || rolNombre === "ADMIN")
                     ? "ADMINISTRADOR"
                     : "VOLUNTARIO"
 
@@ -53,13 +50,10 @@ export default function LoginModal({ open, onClose }) {
                     userType: rolNombre,
                 })
 
-                const redirectTo = location.state?.from?.pathname || "/"
                 handleClose()
-                navigate(redirectTo, { replace: true })
+                navigate(location.state?.from?.pathname || "/profile", { replace: true })
             }
-        } catch (err) {
-            setError(err.message || "Error al iniciar sesión")
-        }
+        } catch { }
     }
 
     return (
@@ -75,7 +69,7 @@ export default function LoginModal({ open, onClose }) {
                 {reason === "not-authenticated" && (
                     <p className={styles.loginWarning}>Inicia sesión...</p>
                 )}
-                {error && <p className={styles.loginError}>{error}</p>}
+                {(error || loginError) && <p className={styles.loginError}>{error || loginError}</p>}
 
                 <form className={styles.loginForm} onSubmit={handleSubmit}>
                     <div className={styles.formField}>
@@ -98,8 +92,8 @@ export default function LoginModal({ open, onClose }) {
                             onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
-                    <ButtonComponent type="submit" variant="primary" className={styles.formButton} disabled={!email || !password}>
-                        Entrar
+                    <ButtonComponent type="submit" variant="primary" className={styles.formButton} disabled={loading || !email || !password}>
+                        {loading ? "Entrando..." : "Entrar"}
                     </ButtonComponent>
                 </form>
             </div>

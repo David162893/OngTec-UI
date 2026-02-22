@@ -2,8 +2,10 @@ import { API_BASE } from "../utils/Paths"
 
 export const GenderService = {
     async getAll() {
-        try {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 8000)
 
+        try {
             const token = localStorage.getItem("authToken")
 
             const res = await fetch(`${API_BASE}/genders`, {
@@ -13,18 +15,23 @@ export const GenderService = {
                     "Accept": "application/json",
                     "Authorization": `Bearer ${token}`,
                 },
+                signal: controller.signal,
             })
+
+            clearTimeout(timeoutId)
 
             if (!res.ok) {
                 const errorData = await res.json().catch(() => ({}))
-                throw new Error(errorData.message || `Error: ${res.status}`)
+                const err = new Error(errorData.message || "Error al obtener los géneros")
+                err.status = res.status
+                throw err
             }
 
             return await res.json()
 
-        } catch (error) {
-            console.error("Error en getAll Genders:", error)
-            throw error
+        } catch (err) {
+            clearTimeout(timeoutId)
+            throw err
         }
     }
 }

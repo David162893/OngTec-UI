@@ -11,12 +11,12 @@ import HomePage from "./pages/Home/HomePage"
 // import ProtectedRoute from "./routes/ProtectedRoute"
 import { AuthProvider, useAuth } from "./context/AuthContext"
 import LoginModal from "./pages/Login/LoginPage"
+import ProfilePage from "./pages/Profile/ProfilePage";
+import NotFound from "./pages/NotFound/NotFoundPage"
 
 
 function AppContent() {
     const { showLoginModal, closeLoginModal } = useAuth()
-    const { notificationsEnabled } = useToast();
-
     return (
         <>
             <Routes>
@@ -35,13 +35,16 @@ function AppContent() {
                             <TasksPage />
                         }
                     />
+                    
                 </Route>
 
                 {/* Rutas SIN header */}
                 <Route element={<SimpleLayout />}>
                     <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/profile" element={<ProfilePage/>} />
                 </Route>
 
+                <Route path="*" element={<NotFound />} />
             </Routes>
 
             <ToastContainer

@@ -14,9 +14,11 @@
     }
 }
 
-.inputText { input { @include mixins.input-base($color-border); } }
-.inputEmail { input { @include mixins.input-base($color-primary-light); } }
-.inputPhone { input { @include mixins.input-base($color-action); } }
-.inputDniNie { input { @include mixins.input-base($color-success); } }
-.inputDate { input { @include mixins.input-base($color-text-medium); } }
-.inputPassword { input { @include mixins.input-base($color-error); } }
+.inputType-text     { @include mixins.input-base($color-border); }
+.inputType-email    { @include mixins.input-base($color-primary-light); }
+.inputType-tel      { @include mixins.input-base($color-action); }
+.inputType-password { @include mixins.input-base($color-border); }
+.inputType-date     { @include mixins.input-base($color-text-medium); }
+.inputType-number   { @include mixins.input-base($color-border); }
+.inputType-search   { @include mixins.input-base($color-primary-light); }
+.inputType-url      { @include mixins.input-base($color-border); }

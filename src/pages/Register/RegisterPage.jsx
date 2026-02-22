@@ -10,11 +10,11 @@ import ButtonComponent from "@/components/Button/ButtonComponent"
 
 export default function RegisterPage() {
 
-    const { data: genders = [] } = useGetGenders()
-    const { data: roles = [] } = useGetRoles()
-    const { data: localidades = [] } = useGetLocalidades()
-    const [fecha, setFecha] = useState({ day: "", month: "", year: "" })
+    const { data: genders = [], loading: loadingGenders } = useGetGenders()
+    const { data: roles = [], loading: loadingRoles } = useGetRoles()
+    const { data: localidades = [], loading: loadingLocalidades } = useGetLocalidades()
 
+    const [fecha, setFecha] = useState({ day: "", month: "", year: "" })
     const [formData, setFormData] = useState({
         nombre: "",
         apellido1: "",
@@ -29,20 +29,28 @@ export default function RegisterPage() {
         localidadId: ""
     })
 
+    const isLoadingSelects = loadingGenders || loadingRoles || loadingLocalidades
+
     const handleChange = (e) => {
         const { name, value } = e.target
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }))
+        setFormData(prev => ({ ...prev, [name]: value }))
     }
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        console.log(formData)
+
+        const { day, month, year } = fecha
+        const fechaNacimiento = day && month && year
+            ? `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+            : ""
+
+        const payload = { ...formData, fechaNacimiento }
+        console.log(payload)
     }
 
-    const handleDisabled = Object.values(formData).some(value => !value)
+    const { apellido2, ...requiredFields } = formData
+    const isFormValid = Object.values(requiredFields).every(value => !!value)
+        && fecha.day && fecha.month && fecha.year
 
     return (
         <div className={styles.registerPage}>
@@ -53,6 +61,7 @@ export default function RegisterPage() {
                 <FormInputComponent
                     label="Nombre"
                     name="nombre"
+                    placeholder="Tu nombre"
                     className={styles.inputText}
                     value={formData.nombre}
                     onChange={handleChange}
@@ -62,6 +71,7 @@ export default function RegisterPage() {
                 <FormInputComponent
                     label="Primer Apellido"
                     name="apellido1"
+                    placeholder="Apellido 1"
                     className={styles.inputText}
                     value={formData.apellido1}
                     onChange={handleChange}
@@ -71,6 +81,7 @@ export default function RegisterPage() {
                 <FormInputComponent
                     label="Segundo Apellido"
                     name="apellido2"
+                    placeholder="Apellido 2 (opcional)"
                     className={styles.inputText}
                     value={formData.apellido2}
                     onChange={handleChange}
@@ -79,6 +90,7 @@ export default function RegisterPage() {
                 <FormInputComponent
                     label="Email"
                     name="email"
+                    placeholder="john.doe@mail.com"
                     className={styles.inputEmail}
                     value={formData.email}
                     onChange={handleChange}
@@ -88,6 +100,7 @@ export default function RegisterPage() {
                 <FormInputComponent
                     label="Número de Teléfono"
                     name="numeroTelefono"
+                    placeholder="612345678"
                     className={styles.inputPhone}
                     value={formData.numeroTelefono}
                     onChange={handleChange}
@@ -97,6 +110,7 @@ export default function RegisterPage() {
                 <FormInputComponent
                     label="DNI / NIE"
                     name="dniNie"
+                    placeholder="12345678A o X1234567B"
                     className={styles.inputDniNie}
                     value={formData.dniNie}
                     onChange={handleChange}
@@ -114,6 +128,8 @@ export default function RegisterPage() {
                 <FormInputComponent
                     label="Contraseña"
                     name="contrasena"
+                    type="password"
+                    placeholder="********"
                     className={styles.inputPassword}
                     value={formData.contrasena}
                     onChange={handleChange}
@@ -123,47 +139,38 @@ export default function RegisterPage() {
                 <FormSelectComponent
                     label="Género"
                     name="generoId"
-                    className={styles.inputSelect}
-                    wrapperClassName={styles.selectWrapper}
                     value={formData.generoId}
                     onChange={handleChange}
-                    options={genders.map(g => ({
-                        value: g.id,
-                        label: g.nombre
-                    }))}
+                    disabled={loadingGenders}
+                    options={genders.map(g => ({ value: g.id, label: g.nombre }))}
                     required
                 />
-
 
                 <FormSelectComponent
                     label="Rol"
                     name="rolId"
-                    className={styles.inputSelect}
-                    wrapperClassName={styles.selectWrapper}
                     value={formData.rolId}
                     onChange={handleChange}
-                    options={roles.map(r => ({
-                        value: r.id,
-                        label: r.nombre
-                    }))}
+                    disabled={loadingRoles}
+                    options={roles.map(r => ({ value: r.id, label: r.nombre }))}
                     required
                 />
 
                 <FormSelectComponent
                     label="Localidad"
                     name="localidadId"
-                    type="select"
-                    className={styles.inputSelect}
-                    wrapperClassName={styles.selectWrapper}
+                    value={formData.localidadId}
                     onChange={handleChange}
-                    options={localidades.map(l => ({
-                        value: l.id,
-                        label: l.nombre
-                    }))}
+                    disabled={loadingLocalidades}
+                    options={localidades.map(l => ({ value: l.id, label: l.nombre }))}
                     required
                 />
 
-                <ButtonComponent type="submit" variant="submitBtn" disabled={handleDisabled}>
+                <ButtonComponent
+                    type="submit"
+                    variant="submitBtn"
+                    disabled={!isFormValid || isLoadingSelects}
+                >
                     Registrarse
                 </ButtonComponent>
 

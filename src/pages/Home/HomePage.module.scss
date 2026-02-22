@@ -96,6 +96,10 @@ footer {
   gap: 1.5rem;
   text-align: center;
 
+  p {
+    color: $color-surface;
+  }
+
   ul {
     list-style: none;
     padding: 0;

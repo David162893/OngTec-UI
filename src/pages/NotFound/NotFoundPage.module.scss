@@ -1,0 +1,51 @@
+@use 'sass:color';
+@use '@/styles/_variables' as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 90vh;
+  background-color: $color-background;
+  padding: 2rem;
+}
+
+.card {
+  background: $color-surface;
+  border-radius: $card-radius;
+  box-shadow: $shadow-md;
+  padding: 4rem 3rem;
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+}
+
+.code {
+  font-size: 7rem;
+  font-weight: 800;
+  line-height: 1;
+  color: $color-error;
+  letter-spacing: -4px;
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $color-text-dark;
+  margin-bottom: 0.75rem;
+}
+
+.description {
+  font-size: 1rem;
+  color: $color-text-light;
+  margin-bottom: 2.5rem;
+}
+
+.logo {
+  width: 140px;
+  height: auto;
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+}

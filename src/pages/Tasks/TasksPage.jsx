@@ -24,8 +24,23 @@ export default function TaskPage() {
         console.log("Tarea actualizada:", updatedTask)
     }
 
-    function handleTaskDelete(task){
+    function handleTaskDelete(task) {
         toast.info(`Tarea "${task.title}" eliminada`)
+    }
+
+    const getEditableData = (task) => {
+        if (!task) return {}
+        return {
+            country: task.country,
+            description: task.description,
+            endDate: task.endDate,
+            location: task.location,
+            region: task.region,
+            requiredUsers: task.requiredUsers,
+            startDate: task.startDate,
+            status: task.status?.name,
+            taskType: task.taskType?.name,
+        }
     }
 
     return <>
@@ -53,17 +68,18 @@ export default function TaskPage() {
                 }
             }
         ]}
-        hiddenColumns={["id", "countryId"]}
-        onEdit={handleTaskEdit}
-        onDelete={handleTaskDelete}
+            hiddenColumns={["id", "idCountry", "idLocation", "idRegion"]}
+            onEdit={handleTaskEdit}
+            onDelete={handleTaskDelete}
         />
-        {selectedTask && <FormModal
-            open={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            title="Editar tarea"
-            initialData={selectedTask}
-            onSubmit={handleSave}
-            fields={tasks && tasks.length > 0 ? Object.keys(tasks[0]) : []}
-        />}
+        {selectedTask && (
+            <FormModal
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                title="Editar tarea"
+                initialData={getEditableData(selectedTask)}
+                onSubmit={handleSave}
+            />
+        )}
     </>
 }

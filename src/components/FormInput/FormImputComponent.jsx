@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useId } from "react"
+import { useCallback, useId } from "react"
 import styles from "./FormImputComponent.module.scss"
 import useAutoSize from "@/hooks/useAutoSize"
 
@@ -31,7 +31,7 @@ export default function FormInputComponent({
     }, [autoSizeChange, onChange])
 
     return (
-        <div className={`${styles.inputWrapper} ${wrapperClassName}`}>
+        <div className={`${styles.inputWrapper} ${wrapperClassName} ${className}`}>
             {label && (
                 <label htmlFor={inputId}>
                     {label}
@@ -48,7 +48,7 @@ export default function FormInputComponent({
                 required={required}
                 disabled={disabled}
                 placeholder={placeholder}
-                className={`${styles[`inputType-${type}`]} ${className}`}
+                className={styles[`inputType-${type}`]}
                 style={autoSize ? { width: `${width}px` } : undefined}
             />
         </div>

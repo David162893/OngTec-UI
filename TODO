@@ -1,6 +1,6 @@
 ===================================
 
-1.- Acabar los componentes genericos restantes
+1.- Acabar los componentes genericos restantes                              /--------- DONE ---------\
 
 2.- Acabar la vista de las tareas y refinarla
 
@@ -9,5 +9,7 @@
 4.- Implementar IA de gemini para analisis de tareas por requisitos
 
 5.- Refinar UI/UX
+
+6.- Revisar porque se aplican mal los estilos a RegisterPage
 
 ===================================

@@ -1,0 +1,183 @@
+@use "@/styles/variables" as *;
+
+$profile-avatar-size: 72px;
+$profile-card-padding: 1.5rem;
+$profile-max-width: 960px;
+
+// ─── Layout principal ────────────────────────────────────────────────────────
+
+.profilePage {
+    max-width: $profile-max-width;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 3rem;
+}
+
+// ─── Header ──────────────────────────────────────────────────────────────────
+
+.profileHeader {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.avatar {
+    flex-shrink: 0;
+    width: $profile-avatar-size;
+    height: $profile-avatar-size;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+    color: $color-text-inverse;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    user-select: none;
+    box-shadow: $shadow-sm;
+}
+
+.profileTitle {
+    h1 {
+        margin: 0 0 0.2rem;
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: $color-text-dark;
+        line-height: 1.2;
+    }
+}
+
+.profileSubtitle {
+    margin: 0;
+    font-size: 1rem;
+    color: $color-text-light;
+}
+
+// ─── Alertas ─────────────────────────────────────────────────────────────────
+
+.successAlert {
+    padding: 0.75rem 1rem;
+    border-radius: $radius-sm;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background-color: $color-success-soft;
+    color: $color-success;
+    border: 1px solid rgba($color-success, 0.3);
+}
+
+.errorAlert {
+    padding: 0.75rem 1rem;
+    border-radius: $radius-sm;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background-color: $color-error-soft;
+    color: $color-error;
+    border: 1px solid rgba($color-error, 0.3);
+}
+
+// ─── Grid dos columnas ───────────────────────────────────────────────────────
+
+.fieldsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+
+    @media (max-width: 640px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+// ─── Fieldsets ───────────────────────────────────────────────────────────────
+
+.fieldset {
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    padding: 1.25rem $profile-card-padding 1.5rem;
+    background-color: $color-surface;
+    box-shadow: $shadow-sm;
+    transition:
+        border-color $transition-fast,
+        box-shadow $transition-fast,
+        opacity $transition-base;
+
+    &:not(:disabled):focus-within {
+        border-color: $color-primary-ring;
+        box-shadow: 0 0 0 3px $color-primary-ring, $shadow-sm;
+    }
+
+    &:disabled {
+        opacity: 0.72;
+        background-color: $color-surface-hover;
+        pointer-events: none;
+    }
+}
+
+.legend {
+    padding: 0 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $color-text-light;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+
+fieldset{
+    div{
+        label{
+            padding-top : 1.5rem;
+        }
+    }
+}
+
+// ─── Acciones ────────────────────────────────────────────────────────────────
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+
+    & > :first-child {
+        margin-right: auto;
+    }
+}
+
+// ─── Contenido interno del modal de contraseña ───────────────────────────────
+
+.passwordModal {
+    width: 420px;
+}
+
+.modalForm {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.modalError {
+    margin: 0.25rem 0 0;
+    font-size: 0.85rem;
+    color: $color-error;
+    font-weight: 500;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+}
+
+// ─── Loading ─────────────────────────────────────────────────────────────────
+
+.loadingText {
+    text-align: center;
+    color: $color-text-light;
+    margin-top: 4rem;
+    font-size: 1rem;
+}
