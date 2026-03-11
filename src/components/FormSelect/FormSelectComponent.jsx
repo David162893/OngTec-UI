@@ -14,77 +14,117 @@ export default function FormSelectComponent({
     const inputId = name || generatedId
 
     const [open, setOpen] = useState(false)
+    const [search, setSearch] = useState("")
+    const [dropdownStyle, setDropdownStyle] = useState({})
     const wrapperRef = useRef(null)
+    const inputRef = useRef(null)
+
+    const filteredOptions = (options || []).filter(o =>
+        typeof o?.label === "string" && o.label.toLowerCase().includes(search.toLowerCase())
+    )
+
+    const handleOpen = () => {
+        if (wrapperRef.current) {
+            const rect = wrapperRef.current.getBoundingClientRect()
+            setDropdownStyle({
+                top: rect.bottom + 4,
+                left: rect.left,
+                width: rect.width,
+            })
+        }
+        setOpen(true)
+        setTimeout(() => inputRef.current?.focus(), 0)
+    }
 
     const handleSelect = (val) => {
         onChange({ target: { name, value: val } })
         setOpen(false)
+        setSearch("")
+    }
+
+    const handleClose = () => {
+        setOpen(false)
+        setSearch("")
     }
 
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-                setOpen(false)
+        const handler = (e) => {
+            if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+                handleClose()
             }
         }
-        document.addEventListener("mousedown", handleClickOutside)
-        return () => document.removeEventListener("mousedown", handleClickOutside)
+        document.addEventListener("mousedown", handler)
+        return () => document.removeEventListener("mousedown", handler)
     }, [])
+
+    useEffect(() => {
+        if (!open) return
+        const recalc = () => {
+            if (wrapperRef.current) {
+                const rect = wrapperRef.current.getBoundingClientRect()
+                setDropdownStyle({
+                    top: rect.bottom + 4,
+                    left: rect.left,
+                    width: rect.width,
+                })
+            }
+        }
+        window.addEventListener("scroll", recalc, true)
+        window.addEventListener("resize", recalc)
+        return () => {
+            window.removeEventListener("scroll", recalc, true)
+            window.removeEventListener("resize", recalc)
+        }
+    }, [open])
+
+    const selectedLabel = options.find(o => o.value === value)?.label ?? ""
 
     return (
         <div className={styles.selectWrapper} ref={wrapperRef}>
             {label && <label htmlFor={inputId}>{label}</label>}
 
-            {/* Select nativo oculto: permite que htmlFor funcione y el browser autofill */}
-            <select
-                id={inputId}
-                name={name}
-                value={value}
-                required={required}
-                onChange={onChange}
-                tabIndex={-1}
-                aria-hidden="true"
-                style={{ display: "none" }}
-            >
-                <option value="">{placeholder}</option>
-                {options.map(o => (
-                    <option key={o.value} value={o.value}>{o.label}</option>
-                ))}
-            </select>
-
             <div
-                className={`${styles.customSelect} ${open ? styles.open : ""}`}
-                onClick={() => setOpen(!open)}
-                role="combobox"
-                aria-expanded={open}
-                aria-haspopup="listbox"
-                aria-labelledby={inputId}
-                tabIndex={0}
+                className={`${styles.inputRow} ${open ? styles.open : ""}`}
+                onClick={handleOpen}
             >
-                <span className={value ? styles.selected : styles.placeholder}>
-                    {value ? options.find(o => o.value === value)?.label : placeholder}
-                </span>
-                <span className={styles.arrow}>▾</span>
+                <input
+                    ref={inputRef}
+                    id={inputId}
+                    type="text"
+                    className={styles.searchInput}
+                    value={open ? search : selectedLabel}
+                    onChange={e => setSearch(e.target.value)}
+                    onFocus={handleOpen}
+                    placeholder={placeholder}
+                    required={required}
+                    autoComplete="off"
+                />
+                <span className={`${styles.arrow} ${open ? styles.arrowOpen : ""}`}>▾</span>
+            </div>
 
-                {open && (
-                    <ul
-                        role="listbox"
-                        className={styles.optionsList}
-                    >
-                        {options.map(option => (
+            {open && (
+                <ul
+                    role="listbox"
+                    className={styles.optionsList}
+                    style={dropdownStyle}
+                >
+                    {filteredOptions.length > 0 ? (
+                        filteredOptions.map(option => (
                             <li
                                 key={option.value}
                                 role="option"
                                 aria-selected={option.value === value}
-                                onClick={() => handleSelect(option.value)}
+                                onMouseDown={() => handleSelect(option.value)}
                                 className={option.value === value ? styles.active : ""}
                             >
                                 {option.label}
                             </li>
-                        ))}
-                    </ul>
-                )}
-            </div>
+                        ))
+                    ) : (
+                        <li className={styles.noOptions}>Sin resultados</li>
+                    )}
+                </ul>
+            )}
         </div>
     )
 }

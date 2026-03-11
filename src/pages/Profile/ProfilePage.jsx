@@ -1,7 +1,9 @@
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import styles from "./ProfilePage.module.scss"
 import { useGetGenders } from "@/hooks/useGenderQueries"
 import { useGetLocalidades } from "@/hooks/useLocalidadQueries"
+import { useGetRegion } from "@/hooks/useRegionQueries"
+import { useGetCountries } from "@/hooks/useCountryQueries"
 import { useUpdateProfile } from "@/hooks/useProfileMutations"
 import { useGetProfile } from "@/hooks/useProfileQueries"
 import FormInputComponent from "@/components/FormInput/FormImputComponent"
@@ -13,8 +15,7 @@ import ModalComponent from "@/components/Modal/ModalComponent"
 export default function ProfilePage() {
 
     const { data: genders = [], loading: loadingGenders } = useGetGenders()
-    const { data: localidades = [], loading: loadingLocalidades } = useGetLocalidades()
-    const { data: profile, loading: loadingProfile } = useGetProfile()
+    const { data: profile } = useGetProfile()
     const { mutate: updateProfile, loading: updatingProfile } = useUpdateProfile()
 
     const [isEditing, setIsEditing] = useState(false)
@@ -22,34 +23,102 @@ export default function ProfilePage() {
     const [errorMessage, setErrorMessage] = useState("")
 
     const [showPasswordModal, setShowPasswordModal] = useState(false)
-    const [passwordData, setPasswordData] = useState({ contrasena: "", confirmarContrasena: "" })
+    const [passwordData, setPasswordData] = useState({ password: "", confirmPassword: "" })
     const [passwordError, setPasswordError] = useState("")
 
     const [fecha, setFecha] = useState(() => {
-        if (profile?.fechaNacimiento) {
-            const d = new Date(profile.fechaNacimiento)
-            return { day: String(d.getDate()), month: String(d.getMonth() + 1), year: String(d.getFullYear()) }
+        const birthDate = profile?.dateOfBirth ? new Date(profile.dateOfBirth) : null
+        return {
+            day: birthDate ? String(birthDate.getDate()) : "",
+            month: birthDate ? String(birthDate.getMonth() + 1) : "",
+            year: birthDate ? String(birthDate.getFullYear()) : ""
         }
-        return { day: "", month: "", year: "" }
     })
 
     const [formData, setFormData] = useState(() => ({
-        nombre: profile?.nombre || "",
-        apellido1: profile?.apellido1 || "",
-        apellido2: profile?.apellido2 || "",
+        name: profile?.name || "",
+        surname1: profile?.surname1 || "",
+        surname2: profile?.surname2 || "",
         email: profile?.email || "",
-        numeroTelefono: profile?.numeroTelefono || "",
+        phoneNumber: profile?.phoneNumber?.toString() || "",
         dniNie: profile?.dniNie || "",
-        fechaNacimiento: profile?.fechaNacimiento || "",
-        generoId: profile?.generoId || "",
-        localidadId: profile?.localidadId || ""
+        dateOfBirth: profile?.dateOfBirth || "",
+        genderId: profile?.gender?.id?.toString() || "",
+        idCountry: profile?.idCountry?.toString() || "",
+        idRegion: profile?.idRegion?.toString() || "",
+        idLocation: profile?.idLocation?.toString() || ""
     }))
 
-    const isLoadingSelects = loadingGenders || loadingLocalidades
+    const [activeCountryId, setActiveCountryId] = useState("")
+    const [activeRegionId, setActiveRegionId] = useState("")
+
+    const countryInitialized = useRef(false)
+    const regionInitialized = useRef(false)
+
+    const { data: countries = [], loading: loadingCountries } = useGetCountries()
+    const { data: regions = [], loading: loadingRegions } = useGetRegion({ idCountry: activeCountryId })
+    const { data: localidades = [], loading: loadingLocalidades } = useGetLocalidades({ idRegion: activeRegionId })
+
+    // Paso 1: cuando countries carga, activar el país del usuario
+    useEffect(() => {
+        if (countryInitialized.current) return
+        if (!loadingCountries && countries.length > 0 && profile?.idCountry) {
+            setActiveCountryId(profile.idCountry.toString())
+            countryInitialized.current = true
+        }
+    }, [loadingCountries, countries])
+
+    // Paso 2: cuando regions carga para ese país, activar la región del usuario
+    useEffect(() => {
+        if (regionInitialized.current) return
+        if (!loadingRegions && regions.length > 0 && profile?.idRegion) {
+            setActiveRegionId(profile.idRegion.toString())
+            regionInitialized.current = true
+        }
+    }, [loadingRegions, regions])
+
+    // Países: { id, country }
+    const countryOptions = countries.map(c => ({
+        value: String(c.id),
+        label: c.country
+    }))
+
+    // Regiones: { idRegion, region }
+    const regionOptions = regions.map(r => ({
+        value: String(r.idRegion),
+        label: r.region
+    }))
+
+    // Localidades: { id, location }
+    const localidadOptions = localidades.map(l => ({
+        value: String(l.id),
+        label: l.location
+    }))
+
+    // Géneros: { id, name }
+    const genderOptions = genders.map(g => ({
+        value: String(g.id),
+        label: g.name
+    }))
+
+    const isLoadingSelects = loadingGenders || loadingCountries || loadingRegions || loadingLocalidades
 
     const handleChange = (e) => {
         const { name, value } = e.target
         setFormData(prev => ({ ...prev, [name]: value }))
+    }
+
+    const handleCountryChange = (e) => {
+        const { value } = e.target
+        setActiveCountryId(value)
+        setActiveRegionId("")
+        setFormData(prev => ({ ...prev, idCountry: value, idRegion: "", idLocation: "" }))
+    }
+
+    const handleRegionChange = (e) => {
+        const { value } = e.target
+        setActiveRegionId(value)
+        setFormData(prev => ({ ...prev, idRegion: value, idLocation: "" }))
     }
 
     const handleEdit = () => {
@@ -63,34 +132,38 @@ export default function ProfilePage() {
         setSuccessMessage("")
         setErrorMessage("")
         if (profile) {
-            const birthDate = profile.fechaNacimiento ? new Date(profile.fechaNacimiento) : null
+            const birthDate = profile.dateOfBirth ? new Date(profile.dateOfBirth) : null
             setFecha({
                 day: birthDate ? String(birthDate.getDate()) : "",
                 month: birthDate ? String(birthDate.getMonth() + 1) : "",
                 year: birthDate ? String(birthDate.getFullYear()) : ""
             })
             setFormData({
-                nombre: profile.nombre || "",
-                apellido1: profile.apellido1 || "",
-                apellido2: profile.apellido2 || "",
+                name: profile.name || "",
+                surname1: profile.surname1 || "",
+                surname2: profile.surname2 || "",
                 email: profile.email || "",
-                numeroTelefono: profile.numeroTelefono || "",
+                phoneNumber: profile.phoneNumber?.toString() || "",
                 dniNie: profile.dniNie || "",
-                fechaNacimiento: profile.fechaNacimiento || "",
-                generoId: profile.generoId || "",
-                localidadId: profile.localidadId || ""
+                dateOfBirth: profile.dateOfBirth || "",
+                genderId: profile.gender?.id?.toString() || "",
+                idCountry: profile.idCountry?.toString() || "",
+                idRegion: profile.idRegion?.toString() || "",
+                idLocation: profile.idLocation?.toString() || ""
             })
+            setActiveCountryId(profile.idCountry?.toString() || "")
+            setActiveRegionId(profile.idRegion?.toString() || "")
         }
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         const { day, month, year } = fecha
-        const fechaNacimiento = day && month && year
-            ? `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+        const dateOfBirth = day && month && year
+            ? `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}Z`
             : ""
         try {
-            await updateProfile({ ...formData, fechaNacimiento })
+            await updateProfile({ ...formData, dateOfBirth })
             setSuccessMessage("Perfil actualizado correctamente.")
             setErrorMessage("")
             setIsEditing(false)
@@ -98,8 +171,6 @@ export default function ProfilePage() {
             setErrorMessage("Error al actualizar el perfil. Inténtalo de nuevo.")
         }
     }
-
-    // ── Modal contraseña ──────────────────────────────────────────────────────
 
     const handlePasswordChange = (e) => {
         const { name, value } = e.target
@@ -109,18 +180,18 @@ export default function ProfilePage() {
 
     const handlePasswordSubmit = async (e) => {
         e.preventDefault()
-        if (!passwordData.contrasena || !passwordData.confirmarContrasena) {
+        if (!passwordData.password || !passwordData.confirmPassword) {
             setPasswordError("Completa ambos campos.")
             return
         }
-        if (passwordData.contrasena !== passwordData.confirmarContrasena) {
+        if (passwordData.password !== passwordData.confirmPassword) {
             setPasswordError("Las contraseñas no coinciden.")
             return
         }
         try {
-            await updateProfile({ contrasena: passwordData.contrasena })
+            await updateProfile({ password: passwordData.password })
             setShowPasswordModal(false)
-            setPasswordData({ contrasena: "", confirmarContrasena: "" })
+            setPasswordData({ password: "", confirmPassword: "" })
             setPasswordError("")
             setSuccessMessage("Contraseña actualizada correctamente.")
         } catch {
@@ -130,36 +201,26 @@ export default function ProfilePage() {
 
     const handleClosePasswordModal = () => {
         setShowPasswordModal(false)
-        setPasswordData({ contrasena: "", confirmarContrasena: "" })
+        setPasswordData({ password: "", confirmPassword: "" })
         setPasswordError("")
     }
 
-    // ── Validación ────────────────────────────────────────────────────────────
-
-    const { apellido2, ...requiredFields } = formData
+    const { surname2, ...requiredFields } = formData
     const isFormValid = Object.values(requiredFields).every(value => !!value)
         && fecha.day && fecha.month && fecha.year
-
-    if (loadingProfile) {
-        return (
-            <div className={styles.profilePage}>
-                <p className={styles.loadingText}>Cargando perfil...</p>
-            </div>
-        )
-    }
 
     return (
         <div className={styles.profilePage}>
 
-            {/* Header */}
             <div className={styles.profileHeader}>
                 <div className={styles.avatar}>
-                    {formData.nombre?.[0]?.toUpperCase()}{formData.apellido1?.[0]?.toUpperCase()}
+                    {formData.name?.[0]?.toUpperCase()}
+                    {formData.surname1?.[0]?.toUpperCase()}
                 </div>
                 <div className={styles.profileTitle}>
                     <h1>Mi Perfil</h1>
                     <p className={styles.profileSubtitle}>
-                        {formData.nombre} {formData.apellido1} {formData.apellido2}
+                        {formData.name} {formData.surname1} {formData.surname2}
                     </p>
                 </div>
             </div>
@@ -175,30 +236,61 @@ export default function ProfilePage() {
                         <legend className={styles.legend}>Datos personales</legend>
 
                         <FormInputComponent
-                            label="Nombre" name="nombre" placeholder="Tu nombre"
-                            value={formData.nombre} onChange={handleChange} required
+                            label="Nombre" name="name" placeholder="Tu nombre"
+                            value={formData.name} onChange={handleChange} required
                         />
                         <FormInputComponent
-                            label="Primer Apellido" name="apellido1" placeholder="Apellido 1"
-                            value={formData.apellido1} onChange={handleChange} required
+                            label="Primer Apellido" name="surname1" placeholder="Apellido 1"
+                            value={formData.surname1} onChange={handleChange} required
                         />
                         <FormInputComponent
-                            label="Segundo Apellido" name="apellido2" placeholder="Apellido 2 (opcional)"
-                            value={formData.apellido2} onChange={handleChange}
+                            label="Segundo Apellido" name="surname2" placeholder="Apellido 2 (opcional)"
+                            value={formData.surname2} onChange={handleChange}
                         />
                         <FormDateComponent
-                            label="Fecha de nacimiento" name="birthdate"
+                            label="Fecha de nacimiento" name="dateOfBirth"
                             value={fecha} onChange={(e) => setFecha(e.target.value)} required
                         />
                         <FormSelectComponent
-                            label="Género" name="generoId" value={formData.generoId}
-                            onChange={handleChange} disabled={loadingGenders || !isEditing}
-                            options={genders.map(g => ({ value: g.id, label: g.nombre }))} required
+                            label="Género"
+                            name="genderId"
+                            value={formData.genderId}
+                            onChange={handleChange}
+                            disabled={loadingGenders || !isEditing}
+                            options={genderOptions}
+                            required
+                        />
+                    </fieldset>
+
+                    <fieldset className={styles.fieldset} disabled={!isEditing}>
+                        <legend className={styles.legend}>Dirección</legend>
+
+                        <FormSelectComponent
+                            label="País"
+                            name="idCountry"
+                            value={formData.idCountry}
+                            onChange={handleCountryChange}
+                            disabled={loadingCountries || !isEditing}
+                            options={countryOptions}
+                            required
                         />
                         <FormSelectComponent
-                            label="Localidad" name="localidadId" value={formData.localidadId}
-                            onChange={handleChange} disabled={loadingLocalidades || !isEditing}
-                            options={localidades.map(l => ({ value: l.id, label: l.nombre }))} required
+                            label="Región / Provincia"
+                            name="idRegion"
+                            value={formData.idRegion}
+                            onChange={handleRegionChange}
+                            disabled={loadingRegions || !isEditing || !formData.idCountry}
+                            options={regionOptions}
+                            required
+                        />
+                        <FormSelectComponent
+                            label="Localidad"
+                            name="idLocation"
+                            value={formData.idLocation}
+                            onChange={handleChange}
+                            disabled={loadingLocalidades || !isEditing || !formData.idRegion}
+                            options={localidadOptions}
+                            required
                         />
                     </fieldset>
 
@@ -210,8 +302,8 @@ export default function ProfilePage() {
                             value={formData.email} onChange={handleChange} required
                         />
                         <FormInputComponent
-                            label="Número de Teléfono" name="numeroTelefono" placeholder="612345678"
-                            value={formData.numeroTelefono} onChange={handleChange} required
+                            label="Número de Teléfono" name="phoneNumber" placeholder="612345678"
+                            value={formData.phoneNumber} onChange={handleChange} required
                         />
                         <FormInputComponent
                             label="DNI / NIE" name="dniNie" placeholder="12345678A o X1234567B"
@@ -251,7 +343,6 @@ export default function ProfilePage() {
 
             </form>
 
-            {/* Modal contraseña */}
             <ModalComponent
                 open={showPasswordModal}
                 onClose={handleClosePasswordModal}
@@ -260,12 +351,12 @@ export default function ProfilePage() {
             >
                 <form onSubmit={handlePasswordSubmit} className={styles.modalForm}>
                     <FormInputComponent
-                        label="Nueva contraseña" name="contrasena" type="password" placeholder="********"
-                        value={passwordData.contrasena} onChange={handlePasswordChange} required
+                        label="Nueva contraseña" name="password" type="password" placeholder="********"
+                        value={passwordData.password} onChange={handlePasswordChange} required
                     />
                     <FormInputComponent
-                        label="Confirmar contraseña" name="confirmarContrasena" type="password" placeholder="********"
-                        value={passwordData.confirmarContrasena} onChange={handlePasswordChange} required
+                        label="Confirmar contraseña" name="confirmPassword" type="password" placeholder="********"
+                        value={passwordData.confirmPassword} onChange={handlePasswordChange} required
                     />
 
                     {passwordError && <p className={styles.modalError}>{passwordError}</p>}

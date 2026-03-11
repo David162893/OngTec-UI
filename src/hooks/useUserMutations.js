@@ -1,18 +1,18 @@
 import { useState } from "react"
 import { toast } from "react-toastify"
-import { TaskService } from "@/services/TaskService"
+import { UserService } from "@/services/UserService"
 import { handleError } from "@/utils/errorHandler"
 
-export default function useTaskMutations() {
+export default function useUserMutations() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
 
-    const createTask = async (taskData) => {
+    const createUser = async (userData) => {
         try {
             setLoading(true)
             setError(null)
-            const data = await TaskService.create(taskData)
-            toast.success("Tarea creada correctamente")
+            const data = await UserService.create(userData)
+            toast.success("Usuario creado correctamente")
             return data
         } catch (err) {
             const message = handleError(err)
@@ -24,14 +24,14 @@ export default function useTaskMutations() {
         }
     }
 
-    const updateTask = async (taskData) => {
-        const body = JSON.stringify(taskData)
+    const updateUser = async (userData) => {
+        const body = JSON.stringify(userData)
         console.log("Body enviado:", body)
         try {
             setLoading(true)
             setError(null)
-            const data = await TaskService.update(taskData)
-            toast.success("Tarea actualizada correctamente")
+            const data = await UserService.update(userData)
+            toast.success("Usuario actualizado correctamente")
             return data
         } catch (err) {
             const message = handleError(err)
@@ -43,12 +43,12 @@ export default function useTaskMutations() {
         }
     }
 
-    const deleteTask = async (taskId) => {
+    const deleteUser = async (userId) => {
         try {
             setLoading(true)
             setError(null)
-            await TaskService.delete(taskId)
-            toast.success("Tarea eliminada correctamente")
+            await UserService.delete(userId)
+            toast.success("Usuario eliminado correctamente")
         } catch (err) {
             const message = handleError(err)
             setError(message)
@@ -59,5 +59,5 @@ export default function useTaskMutations() {
         }
     }
 
-    return { createTask, updateTask, deleteTask, loading, error }
+    return { createUser, updateUser, deleteUser, loading, error }
 }

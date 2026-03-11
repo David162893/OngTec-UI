@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext"
 import ButtonComponent from '@/components/Button/ButtonComponent'
 import styles from './HomePage.module.scss';
+// import PdfView from "@/components/PdfView/PdfViewComponent";
 
 export default function HomePage() {
     const location = useLocation()
@@ -15,6 +16,14 @@ export default function HomePage() {
             modalOpenedRef.current = true
         }
     }, [location, openLoginModal])
+
+    const jsonData = {
+        title: "Informe ONG",
+        items: [
+            { nombre: "Proyecto A", descripcion: "Ayuda alimentaria" },
+            { nombre: "Proyecto B", descripcion: "Educación infantil" }
+        ]
+    };
 
     return (
         <div className={styles.homepageContainer}>

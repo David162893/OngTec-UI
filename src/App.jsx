@@ -1,18 +1,18 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { ToastProvider } from "./context/ToastContext";
 import { ToastContainer } from "react-toastify";
-import { useToast } from "./hooks/useToast";
 import "react-toastify/dist/ReactToastify.css";
 import MainLayout from "@/layout/MainLayout/MainLayout"
 import SimpleLayout from "@/layout/SimpleLayout/SimpleLayout"
 import RegisterPage from "./pages/Register/RegisterPage"
-import TasksPage from "./pages/Tasks/TasksPage"
+import OwnTasksPage from "./pages/OwnTasks/OwnTasksPage"
 import HomePage from "./pages/Home/HomePage"
-// import ProtectedRoute from "./routes/ProtectedRoute"
+import ProtectedRoute from "./routes/ProtectedRoute"
 import { AuthProvider, useAuth } from "./context/AuthContext"
 import LoginModal from "./pages/Login/LoginPage"
 import ProfilePage from "./pages/Profile/ProfilePage";
 import NotFound from "./pages/NotFound/NotFoundPage"
+import UsersPage from "./pages/Users/UsersPage";
 
 
 function AppContent() {
@@ -29,19 +29,41 @@ function AppContent() {
                         element={
                             /*
                             Desabilitado temporalmente para realizar pruebas sin necesidad de loguearse. 
-                            Para reactivar, envolver <TasksPage /> con <ProtectedRoute allowedRoles={["ADMINISTRADOR", "VOLUNTARIO"]}> 
+                            Para reactivar, envolver <OwnTasksPage /> con <ProtectedRoute allowedRoles={["ADMINISTRADOR", "VOLUNTARIO"]}> 
                             y descomentar la importación al inicio del archivo:
                             */
-                            <TasksPage />
+                            <OwnTasksPage />
                         }
                     />
-                    
+                    <Route
+                        path="/tasks"
+                        element={
+                            /*
+                            Desabilitado temporalmente para realizar pruebas sin necesidad de loguearse. 
+                            Para reactivar, envolver <OwnTasksPage /> con <ProtectedRoute allowedRoles={["ADMINISTRADOR", "VOLUNTARIO"]}> 
+                            y descomentar la importación al inicio del archivo:
+                            */
+                            <OwnTasksPage />
+                        }
+                    />
+                    <Route
+                        path="/users"
+                        element={
+                            /*
+                            Desabilitado temporalmente para realizar pruebas sin necesidad de loguearse. 
+                            Para reactivar, envolver <UsersPage /> con <ProtectedRoute allowedRoles={["ADMINISTRADOR", "VOLUNTARIO"]}> 
+                            y descomentar la importación al inicio del archivo:
+                            */
+                            <UsersPage />
+                        }
+                    />
+                    <Route path="/profile" element={<ProfilePage />} />
+
                 </Route>
 
                 {/* Rutas SIN header */}
                 <Route element={<SimpleLayout />}>
                     <Route path="/register" element={<RegisterPage />} />
-                    <Route path="/profile" element={<ProfilePage/>} />
                 </Route>
 
                 <Route path="*" element={<NotFound />} />

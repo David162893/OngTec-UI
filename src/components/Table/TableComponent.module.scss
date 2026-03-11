@@ -5,7 +5,6 @@
 /* Contenedores */
 .table-container {
     width: 100%;
-    overflow-x: auto;
     padding: 4rem 0;
     -webkit-overflow-scrolling: touch;
 
@@ -20,34 +19,39 @@
 }
 
 .table-wrapper {
-    display: table;
-    margin: 0 auto;
+    width: 100%;
     padding: 0 1rem;
+    box-sizing: border-box;
 }
 
 /* Tabla principal */
 .table {
     width: 100%;
+    table-layout: fixed;
     border-collapse: separate;
     border-spacing: 0;
     background-color: white;
     border-radius: $card-radius;
     box-shadow: $shadow-lg;
     overflow: hidden;
-    min-width: 800px;
     font-family: 'Montserrat', sans-serif;
 
-    th,
-    td {
-        padding: 1.15rem 1.5rem;
+    th, td {
+        padding: 1.15rem 1rem;
         text-align: left;
         vertical-align: middle;
         transition: background 0.2s ease, transform 0.2s ease;
+        word-break: break-word;
+        white-space: normal;
     }
 
     th {
         text-align: center;
         vertical-align: middle;
+        white-space: normal;
+        word-break: normal;
+        overflow-wrap: normal;
+        overflow: visible;
     }
 
     thead {
@@ -108,20 +112,328 @@
     }
 }
 
+/* Panel de filtros */
+.filterPanel {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    background-color: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $card-radius;
+    box-shadow: $shadow-sm;
+}
+
+.filterHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.filterTitle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $color-text-light;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+
+    &::before {
+        font-size: 0.9rem;
+    }
+}
+
+.filterInputsRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+}
+
+.filterChip {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    background-color: $color-surface;
+    border: 1.5px solid $color-primary-ring;
+    border-radius: $radius-md;
+    padding: 0.5rem 0.75rem;
+    transition: border-color $transition-fast, box-shadow $transition-fast;
+    position: relative;
+
+    &:focus-within {
+        border-color: $color-primary;
+        box-shadow: 0 0 0 3px $color-primary-soft;
+    }
+}
+
+.filterChipHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.filterChipLabel {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: $color-primary;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.filterClose {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    background: none;
+    border: 1px solid $color-border-strong;
+    border-radius: 50%;
+    cursor: pointer;
+    color: $color-text-light;
+    font-size: 0.55rem;
+    padding: 0;
+    flex-shrink: 0;
+    transition: all $transition-fast;
+
+    &:hover {
+        background-color: $color-error-soft;
+        border-color: $color-error;
+        color: $color-error;
+    }
+}
+
+.filterChipBody {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filterRemove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: 1px solid $color-border-strong;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 4px;
+    transition: all $transition-fast;
+
+    img {
+        width: 12px;
+        height: 12px;
+        opacity: 0.5;
+        transition: opacity $transition-fast;
+        filter: invert(40%);
+    }
+
+    &:hover {
+        background-color: $color-error-soft;
+        border-color: $color-error;
+
+        img {
+            opacity: 1;
+            filter: invert(27%) sepia(90%) saturate(600%) hue-rotate(330deg);
+        }
+    }
+}
+
+.multiselectFilter {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 160px;
+}
+
+.multiselectChips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+}
+
+.multiselectChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.5rem;
+    background-color: $color-primary-soft;
+    border: 1px solid $color-primary-ring;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: $color-primary;
+}
+
+.multiselectChipRemove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $color-text-light;
+    font-size: 0.6rem;
+    padding: 0;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    transition: color $transition-fast;
+
+    &:hover {
+        color: $color-error;
+    }
+}
+
+.dateRangeFilter {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.dateRangeLabel {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $color-text-light;
+    white-space: nowrap;
+}
+
+.filterRemove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    background: none;
+    border: 1px solid $color-border-strong;
+    border-radius: 50%;
+    cursor: pointer;
+    color: $color-text-light;
+    font-size: 0.6rem;
+    transition: all $transition-fast;
+
+    &:hover {
+        background-color: $color-error-soft;
+        border-color: $color-error;
+        color: $color-error;
+    }
+}
+
+.filterEmpty {
+    font-size: 0.82rem;
+    color: $color-muted;
+    font-style: italic;
+}
+
+/* Ordenación */
+.sortableHeader {
+     cursor: pointer;
+    user-select: none;
+
+    &:hover .sortWrapper {
+        &::before {
+            opacity: 1;
+        }
+    }
+}
+
+.headerContent {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    flex-wrap: nowrap;
+    white-space: normal;
+}
+
+.sortWrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.15);
+        opacity: 0;
+        transition: opacity $transition-fast;
+    }
+}
+
+.sortIcon {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+    position: relative;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    filter: brightness(0) invert(1);
+}
+
+.sortNeutral {
+    opacity: 0.3;
+    transform: rotate(0deg);
+}
+
+.sortAsc {
+    opacity: 1;
+    transform: rotate(0deg);
+    filter: brightness(0) saturate(100%) invert(75%) sepia(60%) saturate(500%) hue-rotate(5deg) brightness(105%);
+}
+
+.sortDesc {
+    opacity: 1;
+    transform: rotate(180deg);
+    filter: brightness(0) saturate(100%) invert(75%) sepia(60%) saturate(500%) hue-rotate(5deg) brightness(105%);
+}
+
+.sortBadge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background-color: $color-action;
+    color: $color-text-dark;
+    font-size: 0.55rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
 /* Acciones */
 .actions-header {
     background-color: $color-primary !important;
     color: white !important;
     text-align: center !important;
-    width: 60px;
     font-weight: 700;
+    width: 140px;
+    min-width: 140px;
+    white-space: nowrap;
 }
 
 .actions-cell {
     display: flex;
-    gap: 0.75rem;
-    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.5rem;
     justify-content: center;
+    align-items: center;
 }
 
 /* Array items */
@@ -148,7 +460,7 @@
     font-weight: 500;
 }
 
-/* Modal elegante */
+/* Modal */
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -225,7 +537,6 @@
     }
 }
 
-/* Selector de columnas modal */
 .column-selector-modal {
     width: 550px !important;
     max-width: 90vw !important;
@@ -237,15 +548,9 @@
     gap: 0.5rem;
 }
 
-.columnSelectorBody {
-    @extend .column-selector-body;
-}
-
 /* Responsividad */
 @media (max-width: 1024px) {
     .table {
-        min-width: 100%;
-
         th,
         td {
             padding: 0.9rem 1rem;
@@ -256,7 +561,6 @@
 
 @media (max-width: 768px) {
     .table {
-
         th,
         td {
             padding: 0.75rem 0.8rem;
@@ -292,58 +596,17 @@
 }
 
 /* CamelCase aliases para React / CSS Modules */
-.tableContainer {
-    @extend .table-container;
-}
-
-.tableWrapper {
-    @extend .table-wrapper;
-}
-
-.nestedHeader {
-    @extend .nested-header;
-}
-
-.actionsHeader {
-    @extend .actions-header;
-}
-
-.actionsCell {
-    @extend .actions-cell;
-}
-
-.arrayItem {
-    @extend .array-item;
-}
-
-.noDataMessage {
-    @extend .no-data-message;
-}
-
-.modalOverlay {
-    @extend .modal-overlay;
-}
-
-.modalContent {
-    @extend .modal-content;
-}
-
-.modalHeader {
-    @extend .modal-header;
-}
-
-.modalBody {
-    @extend .modal-body;
-}
-
-.columnOption {
-    @extend .column-option;
-}
-
-.columnSelectorModal {
-    @extend .column-selector-modal;
-}
-
-.columnSelectorBody {
-    @extend .column-selector-body;
-}
+.tableContainer { @extend .table-container; }
+.tableWrapper { @extend .table-wrapper; }
+.nestedHeader { @extend .nested-header; }
+.actionsHeader { @extend .actions-header; }
+.actionsCell { @extend .actions-cell; }
+.arrayItem { @extend .array-item; }
+.noDataMessage { @extend .no-data-message; }
+.modalOverlay { @extend .modal-overlay; }
+.modalContent { @extend .modal-content; }
+.modalHeader { @extend .modal-header; }
+.modalBody { @extend .modal-body; }
+.columnOption { @extend .column-option; }
+.columnSelectorModal { @extend .column-selector-modal; }
+.columnSelectorBody { @extend .column-selector-body; }

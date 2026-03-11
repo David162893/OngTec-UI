@@ -3,8 +3,8 @@ import { toast } from "react-toastify"
 import { TaskService } from "@/services/TaskService"
 import { handleError } from "@/utils/errorHandler"
 
-export function useUserTasks(userId) {
-    const [tasks, setTasks] = useState([])
+export function useUserTasks(userId, page, size) {
+    const [tasks, setTasks] = useState(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
@@ -20,7 +20,8 @@ export function useUserTasks(userId) {
             try {
                 setLoading(true)
                 setError(null)
-                const data = await TaskService.getUserTasks(userId)
+                const data = await TaskService.getUserTasks(userId, page, size)
+                setTasks(data ?? [])
                 console.log("Tareas obtenidas:", data)
                 setTasks(data || [])
             } catch (err) {
@@ -38,7 +39,44 @@ export function useUserTasks(userId) {
 
         return () => controller.abort()
 
-    }, [userId])
+    }, [userId, page, size])
+
+    return { tasks, loading, error }
+}
+
+export function useTasks(page, size) {
+    const [tasks, setTasks] = useState(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
+
+    useEffect(() => {
+
+        const controller = new AbortController()
+
+        const fetchTasks = async () => {
+            try {
+                setLoading(true)
+                setError(null)
+                const data = await TaskService.getTasks(page, size)
+                setTasks(data ?? [])
+                console.log("Tareas obtenidas:", data)
+                setTasks(data || [])
+            } catch (err) {
+                if (err.name === "AbortError") return
+                const message = handleError(err)
+                setError(message)
+                toast.error(message)
+                setTasks([])
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchTasks()
+
+        return () => controller.abort()
+
+    }, [page, size])
 
     return { tasks, loading, error }
 }

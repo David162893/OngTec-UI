@@ -8,7 +8,7 @@ export const GenderService = {
         try {
             const token = localStorage.getItem("authToken")
 
-            const res = await fetch(`${API_BASE}/genders`, {
+            const res = await fetch(`${API_BASE}/open/genders/all`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

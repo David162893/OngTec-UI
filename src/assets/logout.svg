@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1500 789.39">
+  <g transform="translate(-192.82 -201.18)">
+    <g transform="translate(1092.8 340.57)">
+      <rect transform="translate(-661.28 -177.19)" x="686.28" y="402.19" width="550" height="400" rx="50" ry="50" fill="none" stroke="#ff2a2a" stroke-linecap="square" stroke-miterlimit="100" stroke-width="50"/>
+      <path transform="matrix(-1.0296 0 0 -1.0296 841.43 357.21)" d="m525.89 482.34c107 0 194.26-87.262 194.26-194.26v-159.67h-48.564v159.67c0 80.751-64.942 145.69-145.69 145.69-80.751 0-145.69-64.942-145.69-145.69v-12.141h-48.564v12.141c0 107 87.258 194.26 194.26 194.26z" fill="#ff2a2a"/>
+      <path transform="matrix(.1585 .27452 -.27191 .15699 611.39 305.1)" d="m-734-135.42a73.875 73.875 0 0 0-52.963 36.102l-123.14 213.28a73.875 73.875 0 0 0 63.973 110.8h246.28a73.875 73.875 0 0 0 63.971-110.8l-123.14-213.28a73.875 73.875 0 0 0-74.98-36.102z" fill="none" stroke="#ff2a2a" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="100" stroke-width="79.244"/>
+      <rect transform="matrix(.70711 .70711 -.3093 .3093 600.44 558.43)" x="-331.79" y="-15.8" width="50" height="571.53" rx="25" ry="57.153" fill="#ff2a2a"/>
+      <rect transform="matrix(-.70711 .70711 .3093 .3093 -.43724 558.43)" x="-331.79" y="-15.8" width="50" height="571.53" rx="25" ry="57.153" fill="#ff2a2a"/>
+    </g>
+  </g>
+</svg>

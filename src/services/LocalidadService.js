@@ -1,14 +1,13 @@
 import { API_BASE } from "../utils/Paths"
 
 export const LocalidadService = {
-    async getAll() {
-        const controller = new AbortController()
+    async getAll(idRegion, controller) {
         const timeoutId = setTimeout(() => controller.abort(), 8000)
 
         try {
             const token = localStorage.getItem("authToken")
 
-            const res = await fetch(`${API_BASE}/localidades`, {
+            const res = await fetch(`${API_BASE}/open/directions/locations/${idRegion}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

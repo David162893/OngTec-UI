@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 
 export function usePersistedColumns({ storageKey, defaultColumns = [] }) {
-    const [visibleColumns, setVisibleColumns] = useState(() => {
+    const [hiddenColumns, setHiddenColumns] = useState(() => {
         try {
             const stored = localStorage.getItem(storageKey)
             if (stored) {
@@ -11,26 +11,26 @@ export function usePersistedColumns({ storageKey, defaultColumns = [] }) {
         } catch (e) {
             console.warn("Error leyendo columnas persistidas:", e)
         }
-        return defaultColumns
+        return []
     })
 
     useEffect(() => {
         try {
-            localStorage.setItem(storageKey, JSON.stringify(visibleColumns))
+            localStorage.setItem(storageKey, JSON.stringify(hiddenColumns))
         } catch (e) {
             console.warn("Error guardando columnas persistidas:", e)
         }
-    }, [storageKey, visibleColumns])
+    }, [storageKey, hiddenColumns])
 
-    const toggleColumn = (col, allColumns = []) => {
-        setVisibleColumns(prev => {
-            const newCols = prev.includes(col)
+    const toggleColumn = (col) => {
+        setHiddenColumns(prev =>
+            prev.includes(col)
                 ? prev.filter(c => c !== col)
                 : [...prev, col]
-            // Mantener orden según allColumns si se pasa
-            return allColumns.length ? allColumns.filter(c => newCols.includes(c)) : newCols
-        })
+        )
     }
 
-    return { visibleColumns, setVisibleColumns, toggleColumn }
+    const visibleColumns = defaultColumns.filter(c => !hiddenColumns.includes(c))
+
+    return { visibleColumns, hiddenColumns, setHiddenColumns, toggleColumn }
 }

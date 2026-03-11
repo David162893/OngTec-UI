@@ -1,6 +1,15 @@
+const user = JSON.parse(localStorage.getItem("user"))
+
 export const User = {
     getUserId: () => {
-        const user = JSON.parse(localStorage.getItem("user"))
         return user ? user.id : null
+    },
+
+    getUserRegionId: () => {
+        return user ? user.idRegion : null
+    },
+
+    getUserLocationId: () => {
+        return user ? user.idLocation : null
     }
 }

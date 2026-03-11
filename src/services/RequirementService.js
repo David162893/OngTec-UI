@@ -1,22 +1,19 @@
 import { API_BASE } from "../utils/Paths"
 
-export const ProfileService = {
-
-    async update(data) {
-        const controller = new AbortController()
+export const RequirementService = {
+    async getAll(controller) {
         const timeoutId = setTimeout(() => controller.abort(), 8000)
 
         try {
             const token = localStorage.getItem("authToken")
 
-            const res = await fetch(`${API_BASE}/user/update`, {
-                method: "PUT",
+            const res = await fetch(`${API_BASE}/requirements/all`, {
+                method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                     "Authorization": `Bearer ${token}`,
                 },
-                body: JSON.stringify(data),
                 signal: controller.signal,
             })
 
@@ -24,7 +21,7 @@ export const ProfileService = {
 
             if (!res.ok) {
                 const errorData = await res.json().catch(() => ({}))
-                const err = new Error(errorData.message || "Error al actualizar el perfil")
+                const err = new Error(errorData.message || "Error al obtener los requisitos")
                 err.status = res.status
                 throw err
             }

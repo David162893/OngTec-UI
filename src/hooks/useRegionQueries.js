@@ -6,53 +6,54 @@ import {
     toast
 } from "react-toastify"
 import {
-    LocalidadService
-} from "@/services/LocalidadService"
+    RegionService
+} from "@/services/RegionService"
 import {
     handleError
 } from "@/utils/errorHandler"
 
-export function useGetLocalidades({
-    idRegion
+export function useGetRegion({
+    idCountry
 }) {
-    const [localidades, setLocalidades] = useState([])
+    const [region, setRegions] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
     useEffect(() => {
 
-        if (!idRegion) {
-            setLocalidades([])
+        if (!idCountry) {
+            setRegions([])
             setLoading(false)
             return
         }
+
         const controller = new AbortController()
 
-        const fetchLocalidades = async () => {
+        const fetchRegions = async () => {
             try {
                 setLoading(true)
                 setError(null)
-                const data = await LocalidadService.getAll(idRegion, controller)
-                setLocalidades(data ? (Array.isArray(data) ? data : [data]) : [])
+                const data = await RegionService.getAll(idCountry, controller.signal)
+                setRegions(data || [])
             } catch (err) {
                 if (err.name === "AbortError") return
                 const message = handleError(err)
                 setError(message)
                 toast.error(message)
-                setLocalidades([])
+                setRegions([])
             } finally {
                 setLoading(false)
             }
         }
 
-        fetchLocalidades()
+        fetchRegions()
 
         return () => controller.abort()
 
-    }, [idRegion])
+    }, [idCountry])
 
     return {
-        data: localidades,
+        data: region,
         loading,
         error
     }

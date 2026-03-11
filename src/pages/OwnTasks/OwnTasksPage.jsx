@@ -9,7 +9,6 @@ import { useGetRegion } from "@/hooks/useRegionQueries"
 import { useGetLocalidades } from "@/hooks/useLocalidadQueries"
 import { useGetStatuses } from "@/hooks/useStatusQueries"
 import { useGetTaskTypes } from "@/hooks/useTaskTypeQueries"
-import { useGetRequirements } from "@/hooks/useRequirementQueries"
 import { User } from "@/utils/User"
 import styles from "./OwnTasksPage.module.scss"
 import loadingGif from "@/assets/loading.gif"
@@ -41,15 +40,6 @@ export default function TaskPage() {
             maxYear: Math.max(...years) + 100,
         }
     }, [allTasks])
-
-    const selectHooks = useMemo(() => ({
-        country: () => useGetCountries(),
-        region: (formData) => useGetRegion({ idCountry: formData.country?.id ?? null }),
-        location: (formData) => useGetLocalidades({ idRegion: formData.region?.id ?? null }),
-        requirements: () => useGetRequirements(),
-        status: () => useGetStatuses(),
-        taskType: () => useGetTaskTypes()
-    }), [])
 
     useEffect(() => {
 
@@ -127,15 +117,15 @@ export default function TaskPage() {
         if (!task) return {}
         return {
             description: task.description,
-            requiredUsers: task.requiredUsers,
-            requirements: task.requirements ?? [],
+            taskType: task.taskType,
+            requirements: task.requirements,
             country: task.idCountry ? { id: task.idCountry, name: task.country } : null,
             region: task.idRegion ? { id: task.idRegion, name: task.region } : null,
             location: task.idLocation ? { id: task.idLocation, name: task.location } : null,
+            requiredUsers: task.requiredUsers,
             endDate: parseISOToDateObject(task.endDate),
             startDate: parseISOToDateObject(task.startDate),
             status: task.status,
-            taskType: task.taskType,
         }
     }
 
@@ -152,14 +142,20 @@ export default function TaskPage() {
                             description: "Descripción",
                             taskType: "Tipo de tarea",
                             requirements: "Requisitos",
-                            requiredUsers: "Usuarios requeridos",
                             country: "País",
                             region: "Región",
                             location: "Ubicación",
-                            startDate: "Fecha inicio",
+                            requiredUsers: "Usuarios requeridos",
                             endDate: "Fecha fin",
+                            startDate: "Fecha inicio",
                             status: "Estado",
                         }}
+                        columnOrder={[
+                            "description", "taskType.name", "requirements.name",
+                            "country", "region", "location",
+                            "requiredUsers", "endDate", "startDate",
+                            "status"
+                        ]}
                         columnFilterTypes={{
                             "requirements.name": "multiselect",
                             "status.name": "multiselect",
@@ -192,7 +188,13 @@ export default function TaskPage() {
                     title="Editar tarea"
                     initialData={getEditableData(selectedTask)}
                     onSubmit={handleSave}
-                    selectHooks={ selectHooks }
+                    selectHooks={{
+                        country: () => useGetCountries(),
+                        region: (formData) => useGetRegion({ idCountry: formData.country?.id ?? null }),
+                        location: (formData) => useGetLocalidades({ idRegion: formData.region?.id ?? null }),
+                        status: () => useGetStatuses(),
+                        taskType: () => useGetTaskTypes()
+                    }}
                     dateProps={{ minYear, maxYear }}
                 />
             )}

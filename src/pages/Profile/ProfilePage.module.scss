@@ -1,139 +1,249 @@
 @use "@/styles/variables" as *;
 
-$profile-avatar-size: 72px;
-$profile-card-padding: 1.5rem;
-$profile-max-width: 960px;
+// ─── Tokens locales ───────────────────────────────────────────────────────────
 
-// ─── Layout principal ────────────────────────────────────────────────────────
+$avatar-size:     76px;
+$card-pad:        1.75rem;
+$header-gradient: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+
+// ─── Página ───────────────────────────────────────────────────────────────────
 
 .profilePage {
-    max-width: $profile-max-width;
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 2rem 1.5rem 3rem;
+    padding: 2.75rem 2rem 5rem;
+
+    @media (max-width: 640px) {
+        padding: 1.5rem 1rem 3.5rem;
+    }
 }
 
-// ─── Header ──────────────────────────────────────────────────────────────────
+// ─── Header ───────────────────────────────────────────────────────────────────
 
 .profileHeader {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 1.25rem;
+    gap: 1.5rem;
     margin-bottom: 2rem;
+    padding: 2rem $card-pad;
+    background: $header-gradient;
+    border-radius: $card-radius;
+    box-shadow: 0 8px 32px rgba($color-primary-dark, 0.28);
+    overflow: hidden;
+
+    // Decoración geométrica de fondo
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 90% 50%, rgba(#fff, 0.08) 0%, transparent 55%),
+            radial-gradient(circle at 10% 0%,  rgba(#fff, 0.06) 0%, transparent 40%);
+        pointer-events: none;
+    }
+
+    &::after {
+        content: "";
+        position: absolute;
+        right: -40px;
+        top: -40px;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        border: 40px solid rgba(#fff, 0.06);
+        pointer-events: none;
+    }
+
+    @media (max-width: 480px) {
+        padding: 1.5rem 1.25rem;
+        gap: 1rem;
+    }
 }
 
 .avatar {
+    position: relative;
+    z-index: 1;
     flex-shrink: 0;
-    width: $profile-avatar-size;
-    height: $profile-avatar-size;
+    width: $avatar-size;
+    height: $avatar-size;
     border-radius: 50%;
-    background: linear-gradient(135deg, $color-primary, $color-primary-dark);
-    color: $color-text-inverse;
+    background: rgba(#fff, 0.18);
+    backdrop-filter: blur(8px);
+    border: 2.5px solid rgba(#fff, 0.45);
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
     font-weight: 700;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
     user-select: none;
-    box-shadow: $shadow-sm;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+
+    @media (max-width: 480px) {
+        width: 56px;
+        height: 56px;
+        font-size: 1.15rem;
+    }
 }
 
 .profileTitle {
+    position: relative;
+    z-index: 1;
+
     h1 {
-        margin: 0 0 0.2rem;
-        font-size: 1.75rem;
+        margin: 0 0 0.25rem;
+        font-size: 1.55rem;
         font-weight: 700;
-        color: $color-text-dark;
-        line-height: 1.2;
+        color: #fff;
+        line-height: 1.15;
+
+        @media (max-width: 480px) {
+            font-size: 1.25rem;
+        }
     }
 }
 
 .profileSubtitle {
     margin: 0;
-    font-size: 1rem;
-    color: $color-text-light;
+    font-size: 0.9rem;
+    color: rgba(#fff, 0.75);
+    font-weight: 400;
 }
 
-// ─── Alertas ─────────────────────────────────────────────────────────────────
+// ─── Alertas ──────────────────────────────────────────────────────────────────
 
-.successAlert {
+.successAlert,
+.errorAlert {
     padding: 0.75rem 1rem;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     margin-bottom: 1.5rem;
     font-size: 0.875rem;
     font-weight: 500;
+}
+
+.successAlert {
     background-color: $color-success-soft;
     color: $color-success;
-    border: 1px solid rgba($color-success, 0.3);
+    border: 1px solid rgba($color-success, 0.25);
 }
 
 .errorAlert {
-    padding: 0.75rem 1rem;
-    border-radius: $radius-sm;
-    margin-bottom: 1.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
     background-color: $color-error-soft;
     color: $color-error;
-    border: 1px solid rgba($color-error, 0.3);
+    border: 1px solid rgba($color-error, 0.25);
 }
 
-// ─── Grid dos columnas ───────────────────────────────────────────────────────
+// ─── Grid de secciones (las 3 tarjetas lado a lado) ──────────────────────────
 
 .fieldsGrid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.25rem;
     margin-bottom: 1.25rem;
+    align-items: start;
 
-    @media (max-width: 640px) {
+    @media (max-width: 900px) {
+        grid-template-columns: repeat(2, 1fr);
+
+        > :nth-child(3) {
+            grid-column: 1 / -1;
+        }
+    }
+
+    @media (max-width: 560px) {
         grid-template-columns: 1fr;
+
+        > :nth-child(3) {
+            grid-column: auto;
+        }
     }
 }
 
-// ─── Fieldsets ───────────────────────────────────────────────────────────────
+// ─── Fieldset / Tarjeta ───────────────────────────────────────────────────────
 
 .fieldset {
     border: 1px solid $color-border;
-    border-radius: $radius-md;
-    padding: 1.25rem $profile-card-padding 1.5rem;
+    border-radius: $card-radius;
+    padding: 1.5rem $card-pad 1.75rem;
     background-color: $color-surface;
     box-shadow: $shadow-sm;
     transition:
         border-color $transition-fast,
         box-shadow $transition-fast,
-        opacity $transition-base;
+        opacity $transition-base,
+        transform $transition-fast;
+
+    > div {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &:not(:disabled):hover {
+        box-shadow: $shadow-md;
+        transform: translateY(-1px);
+    }
 
     &:not(:disabled):focus-within {
-        border-color: $color-primary-ring;
-        box-shadow: 0 0 0 3px $color-primary-ring, $shadow-sm;
+        border-color: rgba($color-primary, 0.45);
+        box-shadow: 0 0 0 3px $color-primary-ring, $shadow-md;
+        transform: translateY(-1px);
     }
 
     &:disabled {
-        opacity: 0.72;
+        opacity: 0.65;
         background-color: $color-surface-hover;
         pointer-events: none;
     }
-}
 
-.legend {
-    padding: 0 0.5rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: $color-text-light;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-}
-
-fieldset{
-    div{
-        label{
-            padding-top : 1.5rem;
-        }
+    @media (max-width: 640px) {
+        padding: 1.25rem 1.25rem 1.5rem;
     }
 }
 
-// ─── Acciones ────────────────────────────────────────────────────────────────
+// ─── Leyenda ──────────────────────────────────────────────────────────────────
+
+.legend {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.35rem;
+    padding: 0 0.25rem;
+
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: $color-primary;
+
+    // Línea decorativa antes del texto
+    &::before {
+        content: "";
+        display: inline-block;
+        width: 18px;
+        height: 2px;
+        border-radius: 2px;
+        background: linear-gradient(90deg, $color-primary, $color-primary-light);
+        flex-shrink: 0;
+    }
+}
+
+// ─── Labels dentro del fieldset ───────────────────────────────────────────────
+
+fieldset div label {
+    padding-top: 1.25rem;
+}
+
+// ─── Separador entre secciones (línea sutil bajo la leyenda) ─────────────────
+
+.fieldset > legend + div {
+    border-top: 1px solid $color-border;
+    margin-top: 0.75rem;
+    padding-top: 0.25rem;
+}
+
+// ─── Acciones ─────────────────────────────────────────────────────────────────
 
 .actions {
     display: flex;
@@ -141,16 +251,38 @@ fieldset{
     align-items: center;
     gap: 0.75rem;
     flex-wrap: wrap;
+    padding: 1.1rem $card-pad;
+    background: $color-surface;
+    border-radius: $card-radius;
+    border: 1px solid $color-border;
+    box-shadow: $shadow-sm;
 
     & > :first-child {
         margin-right: auto;
     }
+
+    @media (max-width: 520px) {
+        padding: 1rem;
+
+        & > :first-child {
+            margin-right: 0;
+            width: 100%;
+        }
+
+        button:not(:first-child) {
+            flex: 1;
+        }
+    }
 }
 
-// ─── Contenido interno del modal de contraseña ───────────────────────────────
+// ─── Modal ────────────────────────────────────────────────────────────────────
 
 .passwordModal {
     width: 420px;
+
+    @media (max-width: 480px) {
+        width: 100%;
+    }
 }
 
 .modalForm {
@@ -171,9 +303,15 @@ fieldset{
     justify-content: flex-end;
     gap: 0.75rem;
     margin-top: 1.25rem;
+
+    @media (max-width: 400px) {
+        flex-direction: column;
+
+        button { width: 100%; }
+    }
 }
 
-// ─── Loading ─────────────────────────────────────────────────────────────────
+// ─── Loading ──────────────────────────────────────────────────────────────────
 
 .loadingText {
     text-align: center;

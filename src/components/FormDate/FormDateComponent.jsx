@@ -2,6 +2,11 @@ import { useCallback, useMemo } from "react"
 import styles from "./FormDateComponent.module.scss"
 import DrumRollComponent from "@/components/DrumRoll/DrumRollComponent"
 
+// TODO : generar meses dinámicamente para evitar problemas de localización
+// const meses = Array.from({ length: 12 }, (_, i) =>
+//   new Date(2024, i).toLocaleString('es-ES', { month: 'long' })
+// )
+
 const MONTHS = [
     { value: "1", label: "Enero" },
     { value: "2", label: "Febrero" },
@@ -17,12 +22,6 @@ const MONTHS = [
     { value: "12", label: "Diciembre" },
 ]
 
-const currentYear = new Date().getFullYear()
-const YEAR_ITEMS = Array.from({ length: 100 }, (_, i) => ({
-    value: String(currentYear - i),
-    label: String(currentYear - i),
-}))
-
 function getDaysInMonth(year, month) {
     if (!year || !month) return 31
     return new Date(Number(year), Number(month), 0).getDate()
@@ -33,6 +32,8 @@ export default function FormDateComponent({
     label,
     name,
     value = { day: "", month: "", year: "" },
+    maxYear,
+    minYear,
     onChange,
     required = false,
     disabled = false,
@@ -41,6 +42,16 @@ export default function FormDateComponent({
 }) {
     const monthLocked = !value.year
     const dayLocked = !value.year || !value.month
+
+    const currentYear = new Date().getFullYear()
+    const from = minYear ?? currentYear - 99
+    const to = maxYear ?? currentYear
+    const YEAR_ITEMS = useMemo(() =>
+        Array.from({ length: to - from + 1 }, (_, i) => ({
+            value: String(to - i),
+            label: String(to - i),
+        }))
+        , [from, to])
 
     const dayItems = useMemo(() => {
         const count = getDaysInMonth(value.year, value.month)
@@ -78,7 +89,7 @@ export default function FormDateComponent({
                 <div className={styles.drumYear}>
                     <DrumRollComponent
                         items={YEAR_ITEMS}
-                        value={value.year}
+                        value={String(value.year ?? "")}
                         onChange={handlePart("year")}
                         disabled={disabled}
                         label="Año"
@@ -90,7 +101,7 @@ export default function FormDateComponent({
                 <div className={styles.drumMonth}>
                     <DrumRollComponent
                         items={MONTHS}
-                        value={value.month}
+                        value={String(value.month ?? "")}
                         onChange={handlePart("month")}
                         disabled={disabled || monthLocked}
                         label="Mes"
@@ -102,7 +113,7 @@ export default function FormDateComponent({
                 <div className={styles.drumDay}>
                     <DrumRollComponent
                         items={dayItems}
-                        value={value.day}
+                        value={String(value.day ?? "")}
                         onChange={handlePart("day")}
                         disabled={disabled || dayLocked}
                         label="Día"
